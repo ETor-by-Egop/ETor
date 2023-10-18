@@ -1,0 +1,3 @@
+[submodule "Open.NAT"]
+	path = Open.NAT
+	url = git@github.com:ETor-by-Egop/Open.NAT.git

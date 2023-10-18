@@ -13,4 +13,8 @@
       <PackageReference Include="Open.NAT" Version="2.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Open.NAT\Open.Nat\Open.Nat.csproj" />
+    </ItemGroup>
+
 </Project>
