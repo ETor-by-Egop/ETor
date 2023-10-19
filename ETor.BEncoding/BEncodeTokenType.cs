@@ -1,4 +1,4 @@
-﻿namespace ETor;
+﻿namespace ETor.BEncoding;
 
 public enum BEncodeTokenType
 {

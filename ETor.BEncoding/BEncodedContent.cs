@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
-namespace ETor;
+namespace ETor.BEncoding;
 
 public class BEncodedContent
 {
@@ -49,11 +49,6 @@ public class BEncodedContent
         {
             var key = ReadString().Value.ToString();
 
-            if (key == "pieces")
-            {
-                
-            }
-            
             var val = ReadNextNode();
 
             dictionary.Items[key] = val;

@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ETor.BEncoding\ETor.BEncoding.csproj" />
       <ProjectReference Include="..\Open.NAT\Open.Nat\Open.Nat.csproj" />
     </ItemGroup>
 

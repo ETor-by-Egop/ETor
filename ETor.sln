@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor", "ETor\ETor.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Open.Nat", "Open.NAT\Open.Nat\Open.Nat.csproj", "{24F1546D-22BD-41B8-A1E7-575E604D52BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.BEncoding", "ETor.BEncoding\ETor.BEncoding.csproj", "{211F1E93-D753-431A-8E0F-171198014C7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{24F1546D-22BD-41B8-A1E7-575E604D52BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24F1546D-22BD-41B8-A1E7-575E604D52BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24F1546D-22BD-41B8-A1E7-575E604D52BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{211F1E93-D753-431A-8E0F-171198014C7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{211F1E93-D753-431A-8E0F-171198014C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{211F1E93-D753-431A-8E0F-171198014C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{211F1E93-D753-431A-8E0F-171198014C7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

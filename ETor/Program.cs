@@ -1,103 +1,64 @@
 ﻿using ETor;
+using ETor.BEncoding;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using Open.Nat;
 
-var natDiscoverer = new NatDiscoverer();
+// var natDiscoverer = new NatDiscoverer();
+//
+// var device = await natDiscoverer.DiscoverDeviceAsync();
+//
+// await device.DeletePortMapAsync(
+//     new Mapping(
+//         Protocol.Tcp,
+//         50505,
+//         50505,
+//         0,
+//         "ETor"
+//     )
+// );
+//
+// await device.CreatePortMapAsync(
+//     new Mapping(
+//         Protocol.Tcp,
+//         50505,
+//         50505,
+//         0,
+//         "ETor"
+//     )
+// );
 
-var device = await natDiscoverer.DiscoverDeviceAsync();
+//
+var content = await File.ReadAllBytesAsync("C:\\Users\\Admin\\Downloads\\microsoft-windows-10_0_19045_2006-version-22h2-msdn-ru.torrent");
 
-await device.DeletePortMapAsync(
-    new Mapping(
-        Protocol.Tcp,
-        50505,
-        50505,
-        0,
-        "ETor"
-    )
-);
-await device.CreatePortMapAsync(
-    new Mapping(
-        Protocol.Tcp,
-        50505,
-        50505,
-        0,
-        "ETor"
-    )
-);
+var encodedContent = new BEncodedContent(content);
 
-//
-// var content = await File.ReadAllBytesAsync("C:\\Users\\Admin\\Downloads\\microsoft-windows-10_0_19045_2006-version-22h2-msdn-ru.torrent");
-//
-// var encodedContent = new BEncodedContent(content);
-//
-// var dict = encodedContent.ReadDictionary();
-//
-// var obj = JObject.FromObject(dict, JsonSerializer.Create()
-//     .WithMyConverter()
-//     .WithEnumAsString());
-//
-// var pieces = dict["info"]["pieces"] as BEncodeString;
-//
-// var piecesCount = pieces.Value.Value.Count / 20;
-//
-// Console.WriteLine($"Detected {piecesCount} pieces");
-//
-// for (var i = 0; i < piecesCount; i++)
-// {
-//     var piece = pieces.Value.Value.Slice(20 * i, 20);
-//     Console.WriteLine($"P{i}: {string.Join("", piece.Select(x => x.ToString("X2")))}");
-// }
+var dict = encodedContent.ReadDictionary();
 
-// Console.WriteLine(obj.ToString(Formatting.Indented));
+var obj = JObject.FromObject(dict, JsonSerializer.Create()
+    .WithMyConverter()
+    .WithEnumAsString());
 
-// Console.WriteLine(encodedContent.ReadString());
+var pieces = dict["info"]["pieces"] as BEncodeString;
 
-// Console.WriteLine(Encoding.UTF8.GetString(content));
+var piecesCount = pieces.Value.Value.Count / 20;
 
-public class MyConverter : JsonConverter
+Console.WriteLine($"Detected {piecesCount} pieces");
+
+for (var i = 0; i < piecesCount; i++)
 {
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-    {
-        if (value is BEncodeDictionary dict)
-        {
-            serializer.Serialize(writer, dict.Items);
-        }
-        else if (value is BEncodeString str)
-        {
-            serializer.Serialize(writer, str.Value);
-        }
-        else if (value is BEncodeList list)
-        {
-            serializer.Serialize(writer, list.Items);
-        }
-        else if (value is BEncodeInteger i)
-        {
-            serializer.Serialize(writer, i.Value);
-        }
-    }
-
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override bool CanConvert(Type objectType)
-    {
-        if (objectType.IsAssignableTo(typeof(BEncodeNode)))
-        {
-            return true;
-        }
-
-        return false;
-    }
+    var piece = pieces.Value.Value.Slice(20 * i, 20);
+    Console.WriteLine($"P{i}: {piece.ToHexString()}");
 }
+
+Console.WriteLine(obj.ToString(Formatting.Indented));
 
 public static class Extensions
 {
     public static JsonSerializer WithMyConverter(this JsonSerializer serializer)
     {
-        serializer.Converters.Insert(0, new MyConverter());
+        serializer.Converters.Insert(0, new BEncodeJsonConverter());
 
         return serializer;
     }
@@ -107,5 +68,24 @@ public static class Extensions
         serializer.Converters.Insert(0, new StringEnumConverter());
 
         return serializer;
+    }
+
+    public static string ToHexString(this ArraySegment<byte> bytes)
+    {
+        return string.Create(
+            bytes.Count * 2,
+            bytes,
+            (span, segment) =>
+            {
+                for (var index = 0; index < segment.Count; index++)
+                {
+                    var c = segment[index];
+                    if (!c.TryFormat(span[(index * 2)..], out var written, "X2") || written < 2)
+                    {
+                        throw new InvalidOperationException("Failed to format bytes as hex");
+                    }
+                }
+            }
+        );
     }
 }
