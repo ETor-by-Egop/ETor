@@ -34,9 +34,11 @@ using Open.Nat;
 //
 var content = await File.ReadAllBytesAsync("C:\\Users\\Admin\\Downloads\\microsoft-windows-10_0_19045_2006-version-22h2-msdn-ru.torrent");
 
-var encodedContent = new BEncodedContent(content);
+var encodedContent = new BEncodeParser(content);
 
 var dict = encodedContent.ReadDictionary();
+
+var torrentFile = new Torrent(dict);
 
 var obj = JObject.FromObject(dict, JsonSerializer.Create()
     .WithMyConverter()

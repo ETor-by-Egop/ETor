@@ -3,11 +3,11 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace ETor.BEncoding;
 
-public class BEncodedContent
+public class BEncodeParser
 {
     private readonly byte[] _bytes;
 
-    public BEncodedContent(byte[] bytes)
+    public BEncodeParser(byte[] bytes)
     {
         _bytes = bytes;
         _position = 0;
