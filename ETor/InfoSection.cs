@@ -8,9 +8,13 @@ public class InfoSection
     
     public string? Name { get; set; }
 
+    public long? Length { get; set; }
+
     public long? PieceLength { get; set; }
     
     public byte[]? Pieces { get; set; }
+
+    public bool IsSingleFile => Files is null;
 
     public InfoSection(BEncodeDictionary infoDictionary)
     {
@@ -22,6 +26,11 @@ public class InfoSection
         if (infoDictionary.TryGetValue<BEncodeString>("name", out var name))
         {
             Name = name.Value.ToString();
+        }
+
+        if (infoDictionary.TryGetValue<BEncodeInteger>("length", out var length))
+        {
+            Length = length.Value;
         }
 
         if (infoDictionary.TryGetValue<BEncodeInteger>("piece length", out var pieceLength))
