@@ -26,6 +26,14 @@ public class BEncodeString : BEncodeNode
         return Value.ToString();
     }
 
+    public override int CalculateSize()
+    {
+        var len = Value.Value.Length.ToString();
+        var lenBytesCount = Encoding.UTF8.GetByteCount(len);
+
+        return lenBytesCount + 1 + Value.Value.Length;
+    }
+
     public override void Serialize(Stream stream)
     {
         if (!stream.CanWrite)
@@ -33,10 +41,10 @@ public class BEncodeString : BEncodeNode
             throw new InvalidOperationException("Stream is not writable");
         }
 
-        var len = Value.Value.Count.ToString();
-        
+        var len = Value.Value.Length.ToString();
+
         stream.Write(Encoding.UTF8.GetBytes(len));
-        
+
         stream.WriteByte((byte) ':');
         stream.Write(Value.Value);
     }

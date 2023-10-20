@@ -64,9 +64,13 @@ public class InfoSection
 
     public byte[] ComputeSha1()
     {
-        var info = BEncode();
+        var info = this.BEncode();
 
-        using var ms = new MemoryStream();
+        var size = info.CalculateSize();
+        
+        // WARN: We assume here, that int32 max file size is equivalent to 2 Gb, which is probably never a case for a .torrent file
+
+        using var ms = new MemoryStream(size);
         
         info.Serialize(ms);
 

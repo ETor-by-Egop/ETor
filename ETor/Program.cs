@@ -38,34 +38,40 @@ var encodedContent = new BEncodeParser(content);
 
 var dict = encodedContent.ReadDictionary();
 
+var srcSize = dict.CalculateSize();
+
 var torrentFile = new Torrent(dict);
 
-var obj = JObject.FromObject(dict, JsonSerializer.Create()
-    .WithMyConverter()
-    .WithEnumAsString());
+var obj = JObject.FromObject(
+    dict,
+    JsonSerializer.Create()
+        .WithMyConverter()
+        .WithEnumAsString()
+);
 
 var info = dict["info"] as BEncodeDictionary;
 
-using (var ms = new MemoryStream())
-{
-    var hash = torrentFile.Info?.ComputeSha1();
+var hash = torrentFile.Info?.ComputeSha1();
 
-    var hashHex = hash.ToHexString();
-    
-    // 189A413078A8F0EFFD1CFDDB6116DE440866096B
-    
-    _ = 5;
-}
+var hashHex = hash.ToHexString();
+
+// 189A413078A8F0EFFD1CFDDB6116DE440866096B
+
+_ = 5;
 
 var pieces = info["pieces"] as BEncodeString;
 
-var piecesCount = pieces.Value.Value.Count / 20;
+var piecesCount = pieces.Value.Value.Length / 20;
 
 Console.WriteLine($"Detected {piecesCount} pieces");
 
 for (var i = 0; i < piecesCount; i++)
 {
-    var piece = pieces.Value.Value.Slice(20 * i, 20);
+    var piece = pieces.Value.Value
+        .AsSpan()
+        .Slice(20 * i, 20)
+        .ToArray();
+
     Console.WriteLine($"P{i}: {piece.ToHexString()}");
 }
 
@@ -105,7 +111,7 @@ public static class Extensions
             }
         );
     }
-    
+
     public static byte[] Sha1(this byte[] input)
     {
         return SHA1.HashData(input);

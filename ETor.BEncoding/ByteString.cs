@@ -4,16 +4,21 @@ namespace ETor.BEncoding;
 
 public class ByteString
 {
-    public ArraySegment<byte> Value { get; set; }
+    public byte[] Value { get; set; }
+
+    public ByteString(byte[] src)
+    {
+        Value = src;
+    }
 
     public ByteString(byte[] src, int offset, int len)
     {
-        Value = new ArraySegment<byte>(src, offset, len);
+        Value = new ArraySegment<byte>(src, offset, len).ToArray();
     }
 
     public ByteString(string src)
     {
-        Value = new ArraySegment<byte>(Encoding.UTF8.GetBytes(src));
+        Value = Encoding.UTF8.GetBytes(src);
     }
 
     public override string ToString()

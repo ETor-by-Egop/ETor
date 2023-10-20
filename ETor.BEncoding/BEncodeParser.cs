@@ -130,14 +130,11 @@ public class BEncodeParser
 
         var strLen = int.Parse(len);
 
-        var value = new ByteString(_bytes, _position, strLen);
+        var value = new ArraySegment<byte>(_bytes, _position, strLen).ToArray();
 
         Adjust(strLen);
 
-        return new BEncodeString()
-        {
-            Value = value
-        };
+        return new BEncodeString(value);
     }
 
     public BEncodeInteger ReadInteger()

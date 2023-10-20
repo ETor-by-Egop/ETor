@@ -19,6 +19,20 @@ public class BEncodeList : BEncodeNode
         return $"[\n{string.Join(",\n", Items)}\n]";
     }
 
+    public override int CalculateSize()
+    {
+        if (Items.Count == 0)
+        {
+            // start and end anchors
+            return 2;
+        }
+        
+        var contentLength = Items.Select(x => x.CalculateSize())
+            .Sum();
+
+        return 1 + contentLength + 1;
+    }
+
     public override BEncodeNode this[int key] => Items[key];
     
     public override void Serialize(Stream stream)

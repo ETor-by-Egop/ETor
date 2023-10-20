@@ -16,6 +16,13 @@ public class BEncodeInteger : BEncodeNode
         return Value.ToString();
     }
 
+    public override int CalculateSize()
+    {
+        var valLength = Encoding.UTF8.GetByteCount(Value.ToString());
+
+        return 1 + valLength + 1;
+    }
+
     public override void Serialize(Stream stream)
     {
         if (!stream.CanWrite)

@@ -11,6 +11,8 @@ public abstract class BEncodeNode
         Type = type;
     }
 
+    public abstract int CalculateSize();
+
     public virtual BEncodeNode this[string key] => throw new InvalidOperationException("index access on base type");
 
     public virtual BEncodeNode this[int key] => throw new InvalidOperationException("index access on base type");

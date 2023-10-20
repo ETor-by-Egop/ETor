@@ -16,6 +16,25 @@ public class BEncodeDictionary : BEncodeNode
         return $"{{\n{string.Join(",\n", Items.Select(x => $"\"{x.Key}\": {x.Value}"))}}}";
     }
 
+    public override int CalculateSize()
+    {
+        if (Items.Count == 0)
+        {
+            // start and end anchor
+            return 2;
+        }
+
+        var contentSize = Items.Keys
+            .Select(
+                key => new BEncodeString(key).CalculateSize() +
+                       Items[key]
+                           .CalculateSize()
+            )
+            .Sum();
+
+        return 1 + contentSize + 1;
+    }
+
     public override BEncodeNode this[string key] => Items[key];
 
     public override bool TryGetValue<T>(string key, [MaybeNullWhen(false)] out T node)
