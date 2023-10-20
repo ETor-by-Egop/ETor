@@ -18,4 +18,21 @@ public class SingleFileSection : FileSection
             Path.Add(path.Value.ToString());
         }
     }
+    
+    public override BEncodeNode BEncode()
+    {
+        var dict = new BEncodeDictionary();
+
+        if (Length is not null)
+        {
+            dict.Items["length"] = new BEncodeInteger(Length.Value);
+        }
+
+        if (Path is not null)
+        {
+            dict.Items["path"] = new BEncodeString(Path[0]);
+        }
+
+        return dict;
+    }
 }

@@ -6,9 +6,9 @@ public class BEncodeInteger : BEncodeNode
 {
     public long Value { get; set; }
 
-    public BEncodeInteger() : base(BEncodeTokenType.Integer)
+    public BEncodeInteger(long value) : base(BEncodeTokenType.Integer)
     {
-        Value = 0;
+        Value = value;
     }
 
     public override string ToString()

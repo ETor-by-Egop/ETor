@@ -48,13 +48,7 @@ var info = dict["info"] as BEncodeDictionary;
 
 using (var ms = new MemoryStream())
 {
-    info.Serialize(ms);
-
-    var bytes = ms.ToArray();
-
-    var encoded = Encoding.UTF8.GetString(bytes);
-
-    var hash = bytes.Sha1();
+    var hash = torrentFile.Info?.ComputeSha1();
 
     var hashHex = hash.ToHexString();
     

@@ -26,4 +26,21 @@ public class MultiFileSection : FileSection
             }
         }
     }
+
+    public override BEncodeNode BEncode()
+    {
+        var dict = new BEncodeDictionary();
+
+        if (Length is not null)
+        {
+            dict.Items["length"] = new BEncodeInteger(Length.Value);
+        }
+
+        if (Path is not null)
+        {
+            dict.Items["path"] = new BEncodeList(Path.Select(x => new BEncodeString(x)));
+        }
+
+        return dict;
+    }
 }

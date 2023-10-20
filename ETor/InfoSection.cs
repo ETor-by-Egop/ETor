@@ -34,4 +34,44 @@ public class InfoSection
             Pieces = pieces.Value.Value.ToArray();
         }
     }
+
+    public BEncodeNode BEncode()
+    {
+        var dict = new BEncodeDictionary();
+
+        if (Files is not null)
+        {
+            dict.Items["files"] = Files.BEncode();
+        }
+
+        if (Name is not null)
+        {
+            dict.Items["name"] = new BEncodeString(Name);
+        }
+
+        if (PieceLength is not null)
+        {
+            dict.Items["piece length"] = new BEncodeInteger(PieceLength.Value);
+        }
+
+        if (Pieces is not null)
+        {
+            dict.Items["pieces"] = new BEncodeString(Pieces);
+        }
+        
+        return dict;
+    }
+
+    public byte[] ComputeSha1()
+    {
+        var info = BEncode();
+
+        using var ms = new MemoryStream();
+        
+        info.Serialize(ms);
+
+        var bytes = ms.ToArray();
+
+        return bytes.Sha1();
+    }
 }

@@ -11,6 +11,16 @@ public class BEncodeString : BEncodeNode
         Value = new ByteString("");
     }
 
+    public BEncodeString(string value) : base(BEncodeTokenType.String)
+    {
+        Value = new ByteString(value);
+    }
+
+    public BEncodeString(byte[] value) : base(BEncodeTokenType.String)
+    {
+        Value = new ByteString(value, 0, value.Length);
+    }
+
     public override string ToString()
     {
         return Value.ToString();

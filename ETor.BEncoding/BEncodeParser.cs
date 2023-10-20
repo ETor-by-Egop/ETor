@@ -104,8 +104,7 @@ public class BEncodeParser
         Adjust(1);
         var list = new BEncodeList();
 
-        BEncodeTokenType nextToken;
-        while ((nextToken = GetNextTokenType()) is not BEncodeTokenType.End)
+        while (GetNextTokenType() is not BEncodeTokenType.End)
         {
             list.Items.Add(ReadNextNode());
         }
@@ -160,10 +159,7 @@ public class BEncodeParser
 
         Adjust(len + 1);
 
-        return new BEncodeInteger()
-        {
-            Value = num
-        };
+        return new BEncodeInteger(num);
     }
 
     public int FindNextChar(char c)

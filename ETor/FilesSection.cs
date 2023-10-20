@@ -30,4 +30,16 @@ public class FilesSection : List<FileSection>
             }
         }
     }
+
+    public BEncodeNode BEncode()
+    {
+        var list = new BEncodeList();
+        
+        foreach (var file in this)
+        {
+            list.Items.Add(file.BEncode());
+        }
+
+        return list;
+    }
 }

@@ -9,6 +9,11 @@ public class BEncodeList : BEncodeNode
         Items = new List<BEncodeNode>();
     }
 
+    public BEncodeList(IEnumerable<BEncodeNode> nodes) : base(BEncodeTokenType.List)
+    {
+        Items = new List<BEncodeNode>(nodes);
+    }
+
     public override string ToString()
     {
         return $"[\n{string.Join(",\n", Items)}\n]";
