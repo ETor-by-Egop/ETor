@@ -15,4 +15,20 @@ public class BEncodeDictionary : BEncodeNode
     }
 
     public override BEncodeNode this[string key] => Items[key];
+
+    public override void Serialize(Stream stream)
+    {
+        if (!stream.CanWrite)
+        {
+            throw new InvalidOperationException("Stream is not writable");
+        }
+        
+        stream.WriteByte((byte) 'd');
+        foreach (var key in Items.Keys)
+        {
+            key.WriteAsBEncodedString(stream);
+            Items[key].Serialize(stream);
+        }
+        stream.WriteByte((byte) 'e');
+    }
 }

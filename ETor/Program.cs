@@ -1,4 +1,6 @@
-﻿using ETor;
+﻿using System.Security.Cryptography;
+using System.Text;
+using ETor;
 using ETor.BEncoding;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -40,7 +42,26 @@ var obj = JObject.FromObject(dict, JsonSerializer.Create()
     .WithMyConverter()
     .WithEnumAsString());
 
-var pieces = dict["info"]["pieces"] as BEncodeString;
+var info = dict["info"] as BEncodeDictionary;
+
+using (var ms = new MemoryStream())
+{
+    info.Serialize(ms);
+
+    var bytes = ms.ToArray();
+
+    var encoded = Encoding.UTF8.GetString(bytes);
+
+    var hash = bytes.Sha1();
+
+    var hashHex = hash.ToHexString();
+    
+    // 189A413078A8F0EFFD1CFDDB6116DE440866096B
+    
+    _ = 5;
+}
+
+var pieces = info["pieces"] as BEncodeString;
 
 var piecesCount = pieces.Value.Value.Count / 20;
 
@@ -70,7 +91,7 @@ public static class Extensions
         return serializer;
     }
 
-    public static string ToHexString(this ArraySegment<byte> bytes)
+    public static string ToHexString(this IList<byte> bytes)
     {
         return string.Create(
             bytes.Count * 2,
@@ -87,5 +108,10 @@ public static class Extensions
                 }
             }
         );
+    }
+    
+    public static byte[] Sha1(this byte[] input)
+    {
+        return SHA1.HashData(input);
     }
 }
