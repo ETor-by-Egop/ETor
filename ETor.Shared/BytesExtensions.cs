@@ -20,4 +20,33 @@ public static class BytesExtensions
             }
         );
     }
+
+    public static string FormatBytes(this long? bytes)
+    {
+        if (bytes is null)
+        {
+            return "Unknown";
+        }
+
+        var kb = bytes / 1024;
+        var mb = kb / 1024;
+        var gb = mb / 1024;
+
+        if (gb == 0)
+        {
+            if (mb == 0)
+            {
+                if (kb == 0)
+                {
+                    return $"{bytes} Kb";
+                }
+
+                return $"{kb % 1024} Kb, {bytes % 1024} B";
+            }
+
+            return $"{mb % 1024} Mb, {kb % 1024} Kb, {bytes % 1024} B";
+        }
+
+        return $"{gb % 1024} Gb, {mb % 1024} Mb, {kb % 1024} Kb, {bytes % 1024} B";
+    }
 }

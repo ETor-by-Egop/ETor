@@ -6,7 +6,7 @@ namespace ETor.App.Services;
 
 public interface IManifestLoader
 {
-    Task<TorrentManifest> Load(string manifestPath);
+    Task<TorrentDownload> Load(string manifestPath);
 }
 
 public class ManifestLoader : IManifestLoader
@@ -18,13 +18,11 @@ public class ManifestLoader : IManifestLoader
         _logger = logger;
     }
 
-    public async Task<TorrentManifest> Load(string manifestPath)
+    public async Task<TorrentDownload> Load(string manifestPath)
     {
-        var torrentName = Path.GetFileName(manifestPath);
-
         var content = await File.ReadAllBytesAsync(manifestPath);
 
-        _logger.LogInformation("Read .torrent file {file} of size {size}", torrentName, content.Length);
+        _logger.LogInformation("Read .torrent file {path} of size {size}", manifestPath, content.Length);
 
         var encodedContent = new BEncodeParser(content);
 
@@ -32,8 +30,8 @@ public class ManifestLoader : IManifestLoader
 
         var torrentManifest = new TorrentManifest(dict);
 
-        _logger.LogInformation("Parsed .torrent file. Name: {name}. Single-file: {mode}", torrentManifest.Info.Name, torrentManifest.Info.IsSingleFile);
+        _logger.LogInformation("Parsed .torrent file. {@manifest}", torrentManifest);
 
-        return torrentManifest;
+        return new TorrentDownload(torrentManifest, manifestPath);
     }
 }

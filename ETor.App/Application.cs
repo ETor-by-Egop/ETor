@@ -7,46 +7,44 @@ namespace ETor.App;
 public class Application
 {
     private readonly IManifestLoader _manifestLoader;
+    private readonly ITorrentRegistry _registry;
     private readonly ITrackerManager _trackerManager;
 
-    private readonly ILogger<Application> _logger;
-    
-    
-    private readonly TaskCompletionSource _taskCompletionSource = new();
+    public TorrentDownload? SelectedTorrent { get; private set; }
 
-    public Application(IManifestLoader manifestLoader, ITrackerManager trackerManager, ILogger<Application> logger)
+    private readonly ILogger<Application> _logger;
+
+    public Application(IManifestLoader manifestLoader, ITrackerManager trackerManager, ILogger<Application> logger, ITorrentRegistry registry)
     {
         _manifestLoader = manifestLoader;
         _trackerManager = trackerManager;
         _logger = logger;
+        _registry = registry;
     }
 
     public async Task AddDownload(string manifestPath)
     {
-        var torrentManifest = await _manifestLoader.Load(manifestPath);
+        var torrent = await _manifestLoader.Load(manifestPath);
 
-        var trackerUrls = _trackerManager.GetTrackerUrlsFromManifest(torrentManifest)
-            .Distinct()
-            .ToArray();
-        
-        foreach (var trackerUrl in trackerUrls)
-        {
-            var tracker = new Tracker(trackerUrl);
+        _registry.Add(torrent);
 
-            _logger.LogInformation("Attempting to connect to {trackerUrl}", trackerUrl);
-            await _trackerManager.Connect(tracker);
-            _logger.LogInformation("Connection to {trackerUrl} finished", trackerUrl);
-        }
+        // var trackerUrls = _trackerManager.GetTrackerUrlsFromManifest(torrent.Manifest)
+        //     .Distinct()
+        //     .ToArray();
+        //
+        // foreach (var trackerUrl in trackerUrls)
+        // {
+        //     var tracker = new Tracker(trackerUrl);
+        //
+        //     _logger.LogInformation("Attempting to connect to {trackerUrl}", trackerUrl);
+        //     await _trackerManager.Connect(tracker);
+        //     _logger.LogInformation("Connection to {trackerUrl} finished", trackerUrl);
+        // }
     }
 
-    public async Task Initialize()
+    public void SetSelectedTorrent(TorrentDownload torrent)
     {
-        await Task.Yield();
-        _logger.LogInformation("Application started");
-    }
-
-    public Task WaitForExit()
-    {
-        return _taskCompletionSource.Task;
+        _logger.LogInformation("Selected torrent {name}", torrent.Name);
+        SelectedTorrent = torrent;
     }
 }

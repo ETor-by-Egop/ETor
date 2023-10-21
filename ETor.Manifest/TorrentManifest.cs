@@ -2,8 +2,12 @@
 
 namespace ETor.Manifest;
 
+/// <summary>
+/// Manifest is actually a parsed .torrent file
+/// </summary>
 public class TorrentManifest
 {
+
     public string? Announce { get; set; }
 
     public List<string>? AnnounceList { get; set; }
