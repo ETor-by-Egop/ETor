@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using ETor.Shared;
 
 namespace ETor.BEncoding;
 

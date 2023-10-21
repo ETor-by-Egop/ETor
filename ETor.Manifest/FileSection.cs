@@ -1,6 +1,6 @@
 ﻿using ETor.BEncoding;
 
-namespace ETor;
+namespace ETor.Manifest;
 
 public abstract class FileSection
 {

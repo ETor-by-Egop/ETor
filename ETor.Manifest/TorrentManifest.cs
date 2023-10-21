@@ -1,8 +1,8 @@
 ﻿using ETor.BEncoding;
 
-namespace ETor;
+namespace ETor.Manifest;
 
-public class Torrent
+public class TorrentManifest
 {
     public string? Announce { get; set; }
 
@@ -18,7 +18,10 @@ public class Torrent
 
     public InfoSection? Info { get; set; }
 
-    public Torrent(BEncodeDictionary torrentDictionary)
+    public bool HasAnyTrackers => Announce is not null ||
+                                  AnnounceList is not null && AnnounceList.Count > 0;
+
+    public TorrentManifest(BEncodeDictionary torrentDictionary)
     {
         if (torrentDictionary.TryGetValue<BEncodeString>("announce", out var announce))
         {

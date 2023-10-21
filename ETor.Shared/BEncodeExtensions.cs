@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace ETor.BEncoding;
+namespace ETor.Shared;
 
-public static class Extensions
+public static class BEncodeExtensions
 {
     public static void WriteAsBEncodedString(this string str, Stream stream)
     {

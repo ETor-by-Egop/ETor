@@ -1,10 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor", "ETor\ETor.csproj", "{12073865-1D91-435A-99A5-081989E2AC47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.App", "ETor.App\ETor.App.csproj", "{12073865-1D91-435A-99A5-081989E2AC47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Open.Nat", "Open.NAT\Open.Nat\Open.Nat.csproj", "{24F1546D-22BD-41B8-A1E7-575E604D52BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.BEncoding", "ETor.BEncoding\ETor.BEncoding.csproj", "{211F1E93-D753-431A-8E0F-171198014C7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.Networking", "ETor.Networking\ETor.Networking.csproj", "{05812B5C-6703-471A-9CB6-657F025BFCE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.Manifest", "ETor.Manifest\ETor.Manifest.csproj", "{4BFD4E7F-86BA-4A5D-91C2-53F257B37943}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.Shared", "ETor.Shared\ETor.Shared.csproj", "{5E2E5CFD-0E85-4BEF-A286-3B0E23C27B1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETor.Configuration", "ETor.Configuration\ETor.Configuration.csproj", "{894BDAB4-8CCC-42BC-8A87-C033258AABA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +32,21 @@ Global
 		{211F1E93-D753-431A-8E0F-171198014C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{211F1E93-D753-431A-8E0F-171198014C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{211F1E93-D753-431A-8E0F-171198014C7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05812B5C-6703-471A-9CB6-657F025BFCE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05812B5C-6703-471A-9CB6-657F025BFCE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05812B5C-6703-471A-9CB6-657F025BFCE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05812B5C-6703-471A-9CB6-657F025BFCE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BFD4E7F-86BA-4A5D-91C2-53F257B37943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BFD4E7F-86BA-4A5D-91C2-53F257B37943}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BFD4E7F-86BA-4A5D-91C2-53F257B37943}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BFD4E7F-86BA-4A5D-91C2-53F257B37943}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E2E5CFD-0E85-4BEF-A286-3B0E23C27B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E2E5CFD-0E85-4BEF-A286-3B0E23C27B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E2E5CFD-0E85-4BEF-A286-3B0E23C27B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E2E5CFD-0E85-4BEF-A286-3B0E23C27B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894BDAB4-8CCC-42BC-8A87-C033258AABA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894BDAB4-8CCC-42BC-8A87-C033258AABA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894BDAB4-8CCC-42BC-8A87-C033258AABA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894BDAB4-8CCC-42BC-8A87-C033258AABA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

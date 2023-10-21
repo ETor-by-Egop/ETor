@@ -4,10 +4,11 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ETor.Shared\ETor.Shared.csproj" />
+      <ProjectReference Include="..\Open.NAT\Open.Nat\Open.Nat.csproj" />
     </ItemGroup>
 
 </Project>

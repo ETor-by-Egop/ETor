@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography;
-using ETor;
+using ETor.App;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

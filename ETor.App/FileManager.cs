@@ -1,8 +1,10 @@
-﻿namespace ETor;
+﻿using ETor.Manifest;
+
+namespace ETor.App;
 
 public class FileManager
 {
-    public static void CreateFiles(Torrent torrent, string torrentName)
+    public static void CreateFiles(TorrentManifest torrent, string torrentName)
     {
         var downloadsDirectory = new DirectoryInfo("C:\\Users\\Admin\\Downloads\\ETorDownloads");
 

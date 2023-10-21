@@ -1,6 +1,7 @@
 ﻿using ETor.BEncoding;
+using ETor.Shared;
 
-namespace ETor;
+namespace ETor.Manifest;
 
 public class InfoSection
 {

@@ -1,7 +1,7 @@
 using ETor.BEncoding;
 using Newtonsoft.Json;
 
-namespace ETor;
+namespace ETor.App;
 
 public class BEncodeJsonConverter : JsonConverter
 {

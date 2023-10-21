@@ -1,8 +1,8 @@
 ﻿using Open.Nat;
 
-namespace ETor;
+namespace ETor.Networking;
 
-public class Networking
+public class Upnp
 {
     public static async Task CreateUpnpMap()
     {
