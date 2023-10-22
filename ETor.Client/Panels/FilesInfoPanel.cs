@@ -10,14 +10,14 @@ namespace ETor.Client.Panels;
 
 public class FilesInfoPanel : IImGuiPanel
 {
-    private readonly Application _application;
+    private readonly Application _app;
     private readonly ITrackerManager _trackerManager;
     private readonly ILogger<DownloadsPanel> _logger;
 
-    public FilesInfoPanel(ILogger<DownloadsPanel> logger, Application application, ITrackerManager trackerManager)
+    public FilesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITrackerManager trackerManager)
     {
         _logger = logger;
-        _application = application;
+        _app = app;
         _trackerManager = trackerManager;
     }
 
@@ -25,12 +25,15 @@ public class FilesInfoPanel : IImGuiPanel
     {
         if (ImGui.Begin("Files##info-files"))
         {
-            if (_application.SelectedTorrentIndex is not null)
+            var torrent = _app.GetSelectedTorrent();
+            if (torrent is not null)
             {
-                // foreach (var file in _application.SelectedTorrent.Manifest.Info.Files)
-                // {
-                //     ImGui.Text(file.ComputeFilePath());
-                // }
+                foreach (var file in torrent.Files)
+                {
+                    ImGui.Text(file.Path);
+                    ImGui.SameLine();
+                    ImGui.Text(file.LengthBytes.FormatBytes());
+                }
             }
 
             ImGui.End();

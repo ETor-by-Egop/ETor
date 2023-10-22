@@ -81,7 +81,6 @@ public static class Extensions
         services.AddSingleton<Application>();
         services.AddSingleton<IUdpConnector, UdpConnector>();
         services.AddSingleton<ITrackerManager, TrackerManager>();
-        services.AddSingleton<ITorrentRegistry, TorrentRegistry>();
 
         return services;
     }

@@ -9,7 +9,6 @@ namespace ETor.App;
 
 public class Application
 {
-    private readonly ITorrentRegistry _registry;
     private readonly ITrackerManager _trackerManager;
 
     private readonly List<TorrentData> _torrents;
@@ -20,11 +19,10 @@ public class Application
 
     private readonly ILogger<Application> _logger;
 
-    public Application(ITrackerManager trackerManager, ILogger<Application> logger, ITorrentRegistry registry)
+    public Application(ITrackerManager trackerManager, ILogger<Application> logger)
     {
         _trackerManager = trackerManager;
         _logger = logger;
-        _registry = registry;
 
         _torrents = new List<TorrentData>();
     }

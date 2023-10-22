@@ -1,34 +1,29 @@
 ﻿using ETor.App;
+using ETor.App.Data;
 using ETor.Shared;
 using ImGuiNET;
 
 namespace ETor.Client.UiValues;
 
-public class DownloadsTableRow : ComputedTableRow<TorrentDownload>
+public class DownloadsTableRow : ComputedTableRow<TorrentData>
 {
     private int _index;
 
-    private IAutoComputedValueOf<TorrentDownload>[] _columns;
+    private IAutoComputedValueOf<TorrentData>[] _columns;
 
     private bool _isActive;
 
     public DownloadsTableRow(int index)
     {
         _index = index;
-        _columns = new IAutoComputedValueOf<TorrentDownload>[]
+        _columns = new IAutoComputedValueOf<TorrentData>[]
         {
-            new IndexColumnOf<TorrentDownload>(_index),
-            AutoComputedValue<TorrentDownload>.Of(x => x.Name, x => x),
-            AutoComputedValue<TorrentDownload>.Of(
-                x => x.Manifest.Info?.Length ?? x.Manifest.Info?.Files?
-                    .Where(y => y.Length is not null)
-                    .Select(y => y.Length!.Value)
-                    .Sum() ?? 0,
-                x => x.FormatBytes()
-            ),
-            AutoComputedValue<TorrentDownload>.Of(x => "Added", x => x),
-            AutoComputedValue<TorrentDownload>.Of(x => 0L, x => x.FormatBytes() + " / s"),
-            AutoComputedValue<TorrentDownload>.Of(x => 0L, x => x.FormatBytes() + " / s")
+            new IndexColumnOf<TorrentData>(_index),
+            AutoComputedValue<TorrentData>.Of(x => x.Name, x => x),
+            AutoComputedValue<TorrentData>.Of(x => x.TotalLength, x => x.FormatBytes()),
+            AutoComputedValue<TorrentData>.Of(x => "Added", x => x),
+            AutoComputedValue<TorrentData>.Of(x => 0L, x => x.FormatBytes() + " / s"),
+            AutoComputedValue<TorrentData>.Of(x => 0L, x => x.FormatBytes() + " / s")
         };
     }
 
@@ -45,7 +40,7 @@ public class DownloadsTableRow : ComputedTableRow<TorrentDownload>
         }
 
         ImGui.TableNextRow();
-        
+
         ImGui.TableNextColumn();
 
         if (_isActive)

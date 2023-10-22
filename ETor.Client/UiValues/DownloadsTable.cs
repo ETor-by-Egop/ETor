@@ -1,4 +1,5 @@
 ﻿using ETor.App;
+using ETor.App.Data;
 using ETor.Shared;
 using ImGuiNET;
 
@@ -10,11 +11,11 @@ public class DownloadsTable
 
     private List<DownloadsTableRow> _rows = new();
 
-    private SelectableReadOnlyList<TorrentDownload> _source;
+    private IReadOnlyList<TorrentData> _source;
 
-    private int _lastSelectedIndex = -1;
+    private int? _lastSelectedIndex = null;
 
-    public DownloadsTable(SelectableReadOnlyList<TorrentDownload> source)
+    public DownloadsTable(IReadOnlyList<TorrentData> source)
     {
         _source = source;
     }
@@ -44,7 +45,7 @@ public class DownloadsTable
         ImGui.TableHeadersRow();
     }
 
-    public void UpdateIfNeeded()
+    public void UpdateIfNeeded(int? selectedIndex)
     {
         while (_source.Count > _rows.Count)
         {
@@ -61,27 +62,27 @@ public class DownloadsTable
             _rows[i].UpdateIfNeeded(_source[i]);
         }
 
-        if (_lastSelectedIndex != _source.SelectedIndex)
+        if (_lastSelectedIndex != selectedIndex)
         {
-            if (_lastSelectedIndex != -1)
+            if (_lastSelectedIndex != null)
             {
-                _rows[_lastSelectedIndex]
+                _rows[_lastSelectedIndex.Value]
                     .SetActive(false);
             }
 
-            if (_source.SelectedIndex != -1)
+            if (selectedIndex != null)
             {
-                _rows[_source.SelectedIndex]
+                _rows[selectedIndex.Value]
                     .SetActive(true);
             }
 
-            _lastSelectedIndex = _source.SelectedIndex;
+            _lastSelectedIndex = selectedIndex;
         }
     }
 
-    public int DrawData()
+    public int? DrawData()
     {
-        int selectedIndex = -1;
+        int? selectedIndex = null;
         for (var index = 0; index < _rows.Count; index++)
         {
             var row = _rows[index];

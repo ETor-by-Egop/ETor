@@ -9,26 +9,24 @@ namespace ETor.Client.Panels;
 
 public class DownloadsPanel : IImGuiPanel
 {
-    private readonly ITorrentRegistry _registry;
-    private readonly Application _application;
+    private readonly Application _app;
     private readonly ILogger<DownloadsPanel> _logger;
 
     private readonly DownloadsTable _table;
 
-    public DownloadsPanel(ILogger<DownloadsPanel> logger, ITorrentRegistry registry, Application application)
+    public DownloadsPanel(ILogger<DownloadsPanel> logger, Application app)
     {
         _logger = logger;
-        _registry = registry;
-        _application = application;
+        _app = app;
 
-        _table = new DownloadsTable(_registry.GetTorrents());
+        _table = new DownloadsTable(_app.Torrents);
     }
 
     public void OnImGuiRender()
     {
         if (ImGui.Begin("Torrents"))
         {
-            _table.UpdateIfNeeded();
+            _table.UpdateIfNeeded(_app.SelectedTorrentIndex);
 
             if (!_table.HasRows)
             {
@@ -42,11 +40,11 @@ public class DownloadsPanel : IImGuiPanel
 
                     var selectedRow = _table.DrawData();
 
-                    if (selectedRow != _registry.GetTorrents().SelectedIndex)
+                    if (selectedRow != _app.SelectedTorrentIndex)
                     {
-                        if (selectedRow != -1)
+                        if (selectedRow != null)
                         {
-                            _application.SetSelectedTorrent(selectedRow);
+                            _app.SetSelectedTorrent(selectedRow.Value);
                         }
                     }
 
