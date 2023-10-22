@@ -34,7 +34,7 @@ public class DownloadsPanel : IImGuiPanel
             }
             else
             {
-                if (ImGui.BeginTable("##torrents-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg))
+                if (ImGui.BeginTable("##torrents-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
                 {
                     _table.DrawHeaders();
 

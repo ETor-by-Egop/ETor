@@ -63,6 +63,8 @@ public class TorrentData
             _trackers.AddRange(
                 manifest.AnnounceList
                     .Where(x => !string.IsNullOrEmpty(x))
+                    .Distinct()
+                    .Where(x => _trackers.All(y => y.Url != x))
                     .Select(x => new TrackerData(x))
             );
         }

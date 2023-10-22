@@ -2,6 +2,7 @@
 using ETor.App;
 using ETor.App.Services;
 using ETor.Client.Abstractions;
+using ETor.Client.UiValues;
 using ETor.Shared;
 using ImGuiNET;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ public class FilesInfoPanel : IImGuiPanel
 {
     private readonly Application _app;
     private readonly ITrackerManager _trackerManager;
+    private readonly FilesTable _table;
     private readonly ILogger<DownloadsPanel> _logger;
 
     public FilesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITrackerManager trackerManager)
@@ -19,6 +21,7 @@ public class FilesInfoPanel : IImGuiPanel
         _logger = logger;
         _app = app;
         _trackerManager = trackerManager;
+        _table = new FilesTable();
     }
 
     public void OnImGuiRender()
@@ -28,11 +31,27 @@ public class FilesInfoPanel : IImGuiPanel
             var torrent = _app.GetSelectedTorrent();
             if (torrent is not null)
             {
-                foreach (var file in torrent.Files)
+                _table.UpdateIfNeeded(torrent.PieceLength, torrent.Files, null);
+                
+                if (!_table.HasRows)
                 {
-                    ImGui.Text(file.Path);
-                    ImGui.SameLine();
-                    ImGui.Text(file.LengthBytes.FormatBytes());
+                    ImGui.Text("No torrents");
+                }
+                else
+                {
+                    if (ImGui.BeginTable("##files-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                    {
+                        _table.DrawHeaders();
+
+                        var selectedFile = _table.DrawData();
+
+                        if (selectedFile is not null)
+                        {
+                            _logger.LogInformation("User selected file {index}", selectedFile);
+                        }
+
+                        ImGui.EndTable();
+                    }
                 }
             }
 
