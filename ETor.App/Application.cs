@@ -42,8 +42,10 @@ public class Application
         // }
     }
 
-    public void SetSelectedTorrent(TorrentDownload torrent)
+    public void SetSelectedTorrent(int index)
     {
+        _registry.SetSelectedTorrent(index);
+        var torrent = _registry.GetTorrents()[index];
         _logger.LogInformation("Selected torrent {name}", torrent.Name);
         SelectedTorrent = torrent;
     }

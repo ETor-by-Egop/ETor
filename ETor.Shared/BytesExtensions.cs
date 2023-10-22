@@ -21,13 +21,8 @@ public static class BytesExtensions
         );
     }
 
-    public static string FormatBytes(this long? bytes)
+    public static string FormatBytes(this long bytes)
     {
-        if (bytes is null)
-        {
-            return "Unknown";
-        }
-
         var kb = bytes / 1024;
         var mb = kb / 1024;
         var gb = mb / 1024;

@@ -1,7 +1,7 @@
-﻿using System.Numerics;
-using ETor.App;
+﻿using ETor.App;
 using ETor.App.Services;
 using ETor.Client.Abstractions;
+using ETor.Client.UiValues;
 using ImGuiNET;
 using Microsoft.Extensions.Logging;
 
@@ -13,65 +13,41 @@ public class DownloadsPanel : IImGuiPanel
     private readonly Application _application;
     private readonly ILogger<DownloadsPanel> _logger;
 
+    private readonly DownloadsTable _table;
+
     public DownloadsPanel(ILogger<DownloadsPanel> logger, ITorrentRegistry registry, Application application)
     {
         _logger = logger;
         _registry = registry;
         _application = application;
+
+        _table = new DownloadsTable(_registry.GetTorrents());
     }
 
     public void OnImGuiRender()
     {
         if (ImGui.Begin("Torrents"))
         {
-            var torrents = _registry.GetTorrents();
+            _table.UpdateIfNeeded();
 
-            if (torrents.Count == 0)
+            if (!_table.HasRows)
             {
                 ImGui.Text("No torrents");
             }
             else
             {
-                const int columns = 6;
-
-                if (ImGui.BeginTable("##torrents-table", columns, ImGuiTableFlags.RowBg))
+                if (ImGui.BeginTable("##torrents-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg))
                 {
-                    ImGui.TableSetupColumn("#", ImGuiTableColumnFlags.None, 0.1f);
-                    ImGui.TableSetupColumn("Name");
-                    ImGui.TableSetupColumn("Size");
-                    ImGui.TableSetupColumn("Status");
-                    ImGui.TableSetupColumn("Download");
-                    ImGui.TableSetupColumn("Upload");
-                    
-                    ImGui.TableHeadersRow();
+                    _table.DrawHeaders();
 
-                    for (var index = 0; index < torrents.Count; index++)
+                    var selectedRow = _table.DrawData();
+
+                    if (selectedRow != _registry.GetTorrents().SelectedIndex)
                     {
-                        var torrent = torrents[index];
-                        ImGui.TableNextRow();
-                        ImGui.TableNextColumn();
-
-                        // first column is specific, we need to add a full-span selectable, to allow selection of a row
-                        var selected = false;
-                        if (ImGui.Selectable(index.ToString(), ref selected, ImGuiSelectableFlags.SpanAllColumns | ImGuiSelectableFlags.AllowDoubleClick))
+                        if (selectedRow != -1)
                         {
-                            if (ImGui.IsItemHovered())
-                            {
-                                ImGui.TableSetBgColor(ImGuiTableBgTarget.CellBg, 0xFF0000FF);
-                            }
+                            _application.SetSelectedTorrent(selectedRow);
                         }
-
-                        if (selected)
-                        {
-                            _application.SetSelectedTorrent(torrent);
-                        }
-
-                        ImGui.TableNextColumn();
-                        ImGui.Text(torrent.Name);
-                        ImGui.TableNextColumn();
-                        ImGui.TableNextColumn();
-                        ImGui.TableNextColumn();
-                        ImGui.TableNextColumn();
                     }
 
                     ImGui.EndTable();

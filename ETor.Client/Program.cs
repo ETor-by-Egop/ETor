@@ -9,7 +9,9 @@ using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using Color = System.Drawing.Color;
 
-using var window = Window.Create(WindowOptions.Default);
+// this file is mostly a copy of Silk.Net ImGui example + my adaptation from SCVE
+
+IWindow window = Window.Create(WindowOptions.Default);
 
 // Declare some variables
 ImGuiController controller = null!;
@@ -104,3 +106,5 @@ window.Closing += () =>
 
 // Now that everything's defined, let's run this bad boy!
 window.Run();
+
+window.Dispose();
