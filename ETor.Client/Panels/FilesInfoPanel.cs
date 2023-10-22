@@ -25,12 +25,12 @@ public class FilesInfoPanel : IImGuiPanel
     {
         if (ImGui.Begin("Files##info-files"))
         {
-            if (_application.SelectedTorrent is not null)
+            if (_application.SelectedTorrentIndex is not null)
             {
-                foreach (var file in _application.SelectedTorrent.Manifest.Info.Files)
-                {
-                    ImGui.Text(file.ComputeFilePath());
-                }
+                // foreach (var file in _application.SelectedTorrent.Manifest.Info.Files)
+                // {
+                //     ImGui.Text(file.ComputeFilePath());
+                // }
             }
 
             ImGui.End();

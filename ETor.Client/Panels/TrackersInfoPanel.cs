@@ -25,11 +25,12 @@ public class TrackersInfoPanel : IImGuiPanel
     {
         if (ImGui.Begin("Trackers##info-trackers"))
         {
-            if (_application.SelectedTorrent is not null)
+            var selectedTorrent = _application.GetSelectedTorrent();
+            if (selectedTorrent is not null)
             {
-                foreach (var trackerUrl in _trackerManager.GetTrackerUrlsFromManifest(_application.SelectedTorrent.Manifest))
+                foreach (var tracker in selectedTorrent.Trackers)
                 {
-                    ImGui.Text(trackerUrl);
+                    ImGui.Text(tracker.Url);
                 }
             }
 

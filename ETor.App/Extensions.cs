@@ -79,7 +79,6 @@ public static class Extensions
         services.Configure<FilePickerConfig>(configuration.GetSection(nameof(FilePickerConfig)));
 
         services.AddSingleton<Application>();
-        services.AddSingleton<IManifestLoader, ManifestLoader>();
         services.AddSingleton<IUdpConnector, UdpConnector>();
         services.AddSingleton<ITrackerManager, TrackerManager>();
         services.AddSingleton<ITorrentRegistry, TorrentRegistry>();

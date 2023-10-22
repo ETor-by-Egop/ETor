@@ -12,7 +12,7 @@ public class GeneralInfoPanel : IImGuiPanel
 {
     private readonly Application _application;
 
-    private TorrentDownload? _lastDisplayedTorrent;
+    private int? _lastDisplayedTorrentIndex;
     private string _torrentPath;
     private string _length;
     private string _name;
@@ -29,16 +29,17 @@ public class GeneralInfoPanel : IImGuiPanel
     {
         if (ImGui.Begin("General##info-general"))
         {
-            if (_application.SelectedTorrent is not null)
+            var torrent = _application.GetSelectedTorrent();
+            if (torrent is not null)
             {
-                if (_lastDisplayedTorrent != _application.SelectedTorrent)
+                if (_lastDisplayedTorrentIndex != _application.SelectedTorrentIndex)
                 {
-                    _torrentPath = "File: " + _application.SelectedTorrent.FilePath;
-                    _length = "Length: " + (_application.SelectedTorrent.Manifest.Info?.Length?.FormatBytes() ?? "0 B");
-                    _name = "Name: " + _application.SelectedTorrent.Manifest.Info?.Name;
-                    _pieceLength = "Piece Length: " + (_application.SelectedTorrent.Manifest.Info?.PieceLength?.FormatBytes() ?? "0 B");
-                    _pieces = "Pieces Count: " + (_application.SelectedTorrent.Manifest.Info?.Pieces?.Length / 20 ?? 0);
-                    _fileCount = "File Count: " + (_application.SelectedTorrent.Manifest.Info?.Files?.Count ?? 0);
+                    _torrentPath = "File: " + torrent.FilePath;
+                    _length = "Length: " + torrent.TotalLength.FormatBytes();
+                    _name = "Name: " + torrent.Name;
+                    _pieceLength = "Piece Length: " + torrent.PieceLength.FormatBytes();
+                    _pieces = "Pieces Count: " + torrent.Pieces.Count;
+                    _fileCount = "File Count: " + torrent.Files.Count;
                 }
 
                 ImGui.Text(_torrentPath);
@@ -50,7 +51,7 @@ public class GeneralInfoPanel : IImGuiPanel
             }
             else
             {
-                _lastDisplayedTorrent = null;
+                _lastDisplayedTorrentIndex = null;
             }
 
             ImGui.End();

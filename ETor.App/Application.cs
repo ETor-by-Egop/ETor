@@ -1,4 +1,7 @@
-﻿using ETor.App.Services;
+﻿using ETor.App.Data;
+using ETor.App.Services;
+using ETor.BEncoding;
+using ETor.Manifest;
 using ETor.Networking;
 using Microsoft.Extensions.Logging;
 
@@ -6,27 +9,40 @@ namespace ETor.App;
 
 public class Application
 {
-    private readonly IManifestLoader _manifestLoader;
     private readonly ITorrentRegistry _registry;
     private readonly ITrackerManager _trackerManager;
 
-    public TorrentDownload? SelectedTorrent { get; private set; }
+    private readonly List<TorrentData> _torrents;
+
+    public IReadOnlyList<TorrentData> Torrents => _torrents;
+
+    public int? SelectedTorrentIndex { get; private set; }
 
     private readonly ILogger<Application> _logger;
 
-    public Application(IManifestLoader manifestLoader, ITrackerManager trackerManager, ILogger<Application> logger, ITorrentRegistry registry)
+    public Application(ITrackerManager trackerManager, ILogger<Application> logger, ITorrentRegistry registry)
     {
-        _manifestLoader = manifestLoader;
         _trackerManager = trackerManager;
         _logger = logger;
         _registry = registry;
+
+        _torrents = new List<TorrentData>();
     }
 
     public async Task AddDownload(string manifestPath)
     {
-        var torrent = await _manifestLoader.Load(manifestPath);
+        var content = await File.ReadAllBytesAsync(manifestPath);
 
-        _registry.Add(torrent);
+        _logger.LogInformation("Read .torrent file {path} of size {size}", manifestPath, content.Length);
+
+        var encodedContent = new BEncodeParser(content);
+
+        var dict = encodedContent.ReadDictionary();
+
+        var torrentManifest = new TorrentManifest(dict);
+
+        var torrentData = new TorrentData(torrentManifest, manifestPath);
+        _torrents.Add(torrentData);
 
         // var trackerUrls = _trackerManager.GetTrackerUrlsFromManifest(torrent.Manifest)
         //     .Distinct()
@@ -44,9 +60,13 @@ public class Application
 
     public void SetSelectedTorrent(int index)
     {
-        _registry.SetSelectedTorrent(index);
-        var torrent = _registry.GetTorrents()[index];
-        _logger.LogInformation("Selected torrent {name}", torrent.Name);
-        SelectedTorrent = torrent;
+        SelectedTorrentIndex = index;
+    }
+
+    public TorrentData? GetSelectedTorrent()
+    {
+        return SelectedTorrentIndex is not null
+            ? Torrents[SelectedTorrentIndex.Value]
+            : null;
     }
 }

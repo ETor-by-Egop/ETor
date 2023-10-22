@@ -7,7 +7,6 @@ namespace ETor.Manifest;
 /// </summary>
 public class TorrentManifest
 {
-
     public string? Announce { get; set; }
 
     public List<string>? AnnounceList { get; set; }
@@ -21,9 +20,6 @@ public class TorrentManifest
     public string? Encoding { get; set; }
 
     public InfoSection? Info { get; set; }
-
-    public bool HasAnyTrackers => Announce is not null ||
-                                  AnnounceList is not null && AnnounceList.Count > 0;
 
     public TorrentManifest(BEncodeDictionary torrentDictionary)
     {
