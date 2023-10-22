@@ -96,6 +96,11 @@ public class TorrentData
 
                 _files.Add(new FileData(string.Join("\\", file.Path), file.Length.Value));
             }
+
+            if (_files.Count == 0)
+            {
+                throw new InvalidOperationException("Bad multi-file .torrent manifest. No files could be added");
+            }
         }
 
         TotalLength = _files.Sum(x => x.LengthBytes);
