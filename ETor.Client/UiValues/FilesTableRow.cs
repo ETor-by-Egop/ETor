@@ -23,7 +23,7 @@ public class FilesTableRow : ComputedTableRow<FileData>
             new IndexColumnOf<FileData>(_index),
             AutoComputedValue<FileData>.Of(x => x.Path, x => x),
             AutoComputedValue<FileData>.Of(x => x.LengthBytes, x => x.FormatBytes()),
-            AutoComputedValue<FileData>.Of(x => "Added", x => x),
+            AutoComputedValue<FileData>.Of(x => x.Status, x => x.ToString("G")),
             AutoComputedValue<FileData>.Of(x => (int)MathF.Ceiling(x.LengthBytes / (float)_pieceLength), x => x.ToString())
         };
     }

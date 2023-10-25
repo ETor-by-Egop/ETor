@@ -22,44 +22,42 @@ public class UdpConnector : IUdpConnector
         _logger = logger;
         _networkConfig = networkConfig;
     }
-    
+
     public async Task ConnectTo(string host, int port)
     {
         try
         {
             // var address = DnsLookup(host);
-            IAsyncResult asyncResult;
             IPEndPoint? any = new IPEndPoint(IPAddress.Any, _networkConfig.Value.Port);
 
             try
             {
                 using (UdpClient udp = new UdpClient())
                 {
-                    udp.Client.SendTimeout = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
-                    udp.Client.ReceiveTimeout = (int)TimeSpan.FromSeconds(15).TotalMilliseconds;
+                    udp.Client.SendTimeout = (int) TimeSpan.FromSeconds(5)
+                        .TotalMilliseconds;
+                    udp.Client.ReceiveTimeout = (int) TimeSpan.FromSeconds(15)
+                        .TotalMilliseconds;
 
                     var request = new UdpConnectRequest(Random.Shared.Next());
 
                     byte[] buffer = new byte[16];
                     request.Serialize(buffer);
 
-                    await udp.SendAsync(buffer, buffer.Length, host, port);
+                    await udp.SendAsync(
+                        buffer,
+                        buffer.Length,
+                        host,
+                        port
+                    );
 
-                    asyncResult = udp.BeginReceive(null, null);
+                    using var source = new CancellationTokenSource(5000);
 
-                    if (asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5)))
-                    {
-                        var data = udp.EndReceive(asyncResult, ref any);
+                    var result = await udp.ReceiveAsync(source.Token);
 
-                        var response = UdpConnectResponse.Deserialize(data);
-                        
-                        _logger.LogInformation("Received Response: {@response}", response);
-                    }
-                    else
-                    {
-                        // timeout
-                        _logger.LogWarning("Tracker connect timeout");
-                    }
+                    var response = UdpConnectResponse.Deserialize(result.Buffer);
+
+                    _logger.LogInformation("Received Response: {@response}", response);
                 }
             }
             catch (SocketException ex)
@@ -69,13 +67,18 @@ public class UdpConnector : IUdpConnector
         }
         catch (Exception e)
         {
-            _logger.LogWarning(e, "Failed to connect to {Host}:{Port}.", host, port);
+            _logger.LogWarning(
+                e,
+                "Failed to connect to {Host}:{Port}.",
+                host,
+                port
+            );
         }
     }
-    
-    protected static IPAddress DnsLookup(string hostNameOrAddress)  
-    {  
-        IPHostEntry hostEntry = Dns.GetHostEntry(hostNameOrAddress);  
+
+    protected static IPAddress DnsLookup(string hostNameOrAddress)
+    {
+        IPHostEntry hostEntry = Dns.GetHostEntry(hostNameOrAddress);
 
         IPAddress[] ips = hostEntry.AddressList;
 
@@ -83,7 +86,8 @@ public class UdpConnector : IUdpConnector
         {
             throw new Exception($"Resolved {ips.Length} ips, which is not supported for host {hostNameOrAddress}");
         }
-        
-        return ips[0].MapToIPv4();
-    }  
+
+        return ips[0]
+            .MapToIPv4();
+    }
 }

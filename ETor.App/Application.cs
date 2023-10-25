@@ -10,6 +10,7 @@ namespace ETor.App;
 public class Application
 {
     private readonly ITrackerManager _trackerManager;
+    private readonly IFileManager _fileManager;
 
     private readonly List<TorrentData> _torrents;
 
@@ -19,10 +20,11 @@ public class Application
 
     private readonly ILogger<Application> _logger;
 
-    public Application(ITrackerManager trackerManager, ILogger<Application> logger)
+    public Application(ITrackerManager trackerManager, ILogger<Application> logger, IFileManager fileManager)
     {
         _trackerManager = trackerManager;
         _logger = logger;
+        _fileManager = fileManager;
 
         _torrents = new List<TorrentData>();
     }
@@ -66,5 +68,10 @@ public class Application
         return SelectedTorrentIndex is not null
             ? Torrents[SelectedTorrentIndex.Value]
             : null;
+    }
+
+    public async Task CreateFiles(TorrentData torrentData)
+    {
+        await _fileManager.CreateFiles(torrentData);
     }
 }

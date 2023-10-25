@@ -6,6 +6,8 @@ public class FileData
 
     public long LengthBytes { get; set; }
 
+    public FileStatus Status { get; set; }
+
     public FileData(string path, long lengthBytes)
     {
         Path = path;

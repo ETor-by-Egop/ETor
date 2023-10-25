@@ -26,6 +26,15 @@ public class DownloadsPanel : IImGuiPanel
     {
         if (ImGui.Begin("Torrents"))
         {
+
+            if (_app.SelectedTorrentIndex.HasValue)
+            {
+                if (ImGui.Button("Create Files##create-files"))
+                {
+                    Task.Run(() => _app.CreateFiles(_app.Torrents[_app.SelectedTorrentIndex.Value]));
+                }
+            }
+
             _table.UpdateIfNeeded(_app.SelectedTorrentIndex);
 
             if (!_table.HasRows)
