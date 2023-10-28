@@ -12,6 +12,7 @@ public class Application
 {
     private readonly ITrackerManager _trackerManager;
     private readonly IFileManager _fileManager;
+    private readonly IPieceManager _pieceManager;
 
     private readonly List<TorrentData> _torrents;
 
@@ -21,11 +22,12 @@ public class Application
 
     private readonly ILogger<Application> _logger;
 
-    public Application(ITrackerManager trackerManager, ILogger<Application> logger, IFileManager fileManager)
+    public Application(ITrackerManager trackerManager, ILogger<Application> logger, IFileManager fileManager, IPieceManager pieceManager)
     {
         _trackerManager = trackerManager;
         _logger = logger;
         _fileManager = fileManager;
+        _pieceManager = pieceManager;
 
         _torrents = new List<TorrentData>();
     }
@@ -78,47 +80,12 @@ public class Application
             return;
         }
 
+        // ensure that all files exist
         await _fileManager.EnsureFileExistence(torrent);
 
-        if (torrent.Files.Count > 1)
-        {
-            _logger.LogWarning("Failed to start download, because multi-file torrents aren't supported yet");
-        }
-        
-
-        Memory<byte> buffer = new byte[torrent.PieceLength];
-        Memory<byte> hashBuffer = new byte[64];
-
-        var file = torrent.Files[0];
-        var stream = _fileManager.GetStream(torrent, file);
-        var pieces = torrent.Pieces;
-        
-        for (var i = 0; i < pieces.Count; i++)
-        {
-            var piece = pieces[i];
-        
-            var readBytes = await stream.ReadAsync(buffer);
-
-            if (readBytes != torrent.PieceLength)
-            {
-                _logger.LogWarning("Failed to read {pieceLength} bytes from filestream, only read {actual}", torrent.PieceLength, readBytes);
-            }
-
-            buffer.Sha1(hashBuffer);
-
-            if (hashBuffer.Span.SequenceEqual(piece.Hash.Span))
-            {
-                piece.Status = PieceStatus.Good;
-                _logger.LogInformation("Piece {number} is ok at {position}", i, stream.Position);
-            }
-            else
-            {
-                piece.Status = PieceStatus.Bad;
-                _logger.LogInformation("Piece {number} is bad at {position}", i, stream.Position);
-            }
-        }
-
         // find pieces, that are already downloaded (cache it?)
+        await _pieceManager.CheckPieces(torrent);
+
         // connect to trackers
         // announce
         // connect to peer

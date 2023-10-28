@@ -38,8 +38,6 @@ public class PiecesTableRow : ComputedTableRow<PieceData>
             IsDirty = false;
         }
 
-        ImGui.TableNextRow();
-
         ImGui.TableNextColumn();
 
         if (_isActive)

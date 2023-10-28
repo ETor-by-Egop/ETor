@@ -8,6 +8,8 @@ public class TrackerData
 
     public TrackerProtocol Protocol { get; set; }
 
+    public TrackerStatus Status { get; set; }
+
     public long LastConnectedAt { get; set; } = Stopwatch.GetTimestamp();
 
     public long ConnectionId { get; set; }

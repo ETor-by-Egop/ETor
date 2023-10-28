@@ -39,7 +39,7 @@ public class PiecesInfoPanel : IImGuiPanel
                 }
                 else
                 {
-                    if (ImGui.BeginTable("##pieces-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                    if (ImGui.BeginTable("##pieces-table", PiecesTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
                     {
                         _table.DrawHeaders();
 

@@ -40,8 +40,6 @@ public class DownloadsTableRow : ComputedTableRow<TorrentData>
             IsDirty = false;
         }
 
-        ImGui.TableNextRow();
-
         ImGui.TableNextColumn();
 
         if (_isActive)

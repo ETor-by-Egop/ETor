@@ -60,6 +60,7 @@ public static class Extensions
         services.AddSingleton<IUdpConnector, UdpConnector>();
         services.AddSingleton<ITrackerManager, TrackerManager>();
         services.AddSingleton<IFileManager, FileManager>();
+        services.AddSingleton<IPieceManager, PieceManager>();
 
         return services;
     }

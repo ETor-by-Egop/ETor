@@ -1,5 +1,4 @@
-﻿using ETor.Manifest;
-using ETor.Networking;
+﻿using ETor.Networking;
 using Microsoft.Extensions.Logging;
 
 namespace ETor.App.Services;
@@ -7,7 +6,6 @@ namespace ETor.App.Services;
 public interface ITrackerManager
 {
     Task Connect(Tracker tracker);
-    IEnumerable<string> GetTrackerUrlsFromManifest(TorrentManifest torrentManifest);
 }
 
 public class TrackerManager : ITrackerManager
@@ -30,21 +28,5 @@ public class TrackerManager : ITrackerManager
         }
 
         await _udpConnector.ConnectTo(tracker.Host, tracker.Port);
-    }
-
-    public IEnumerable<string> GetTrackerUrlsFromManifest(TorrentManifest torrentManifest)
-    {
-        if (torrentManifest.Announce is not null)
-        {
-            yield return torrentManifest.Announce;
-        }
-
-        if (torrentManifest.AnnounceList is not null && torrentManifest.AnnounceList.Count > 0)
-        {
-            foreach (var trackerUrl in torrentManifest.AnnounceList)
-            {
-                yield return trackerUrl;
-            }
-        }
     }
 }

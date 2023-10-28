@@ -39,7 +39,7 @@ public class FilesInfoPanel : IImGuiPanel
                 }
                 else
                 {
-                    if (ImGui.BeginTable("##files-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                    if (ImGui.BeginTable("##files-table", FilesTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
                     {
                         _table.DrawHeaders();
 

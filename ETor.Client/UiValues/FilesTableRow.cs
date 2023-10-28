@@ -41,8 +41,6 @@ public class FilesTableRow : ComputedTableRow<FileData>
             IsDirty = false;
         }
 
-        ImGui.TableNextRow();
-
         ImGui.TableNextColumn();
 
         if (_isActive)
