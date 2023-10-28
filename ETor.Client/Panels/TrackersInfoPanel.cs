@@ -29,29 +29,31 @@ public class TrackersInfoPanel : IImGuiPanel
         if (ImGui.Begin("Trackers##info-trackers"))
         {
             var torrent = _app.GetSelectedTorrent();
-            if (torrent is not null)
+
+            if (ImGui.BeginTable("##trackers-table", TrackersTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
             {
-                _table.UpdateIfNeeded(torrent.Trackers, null);
-                
+                if (torrent is not null)
+                {
+                    _table.UpdateIfNeeded(torrent.Trackers, null);
+                }
+
+                _table.DrawHeaders();
+
                 if (!_table.HasRows)
                 {
+                    ImGui.EndTable();
                     ImGui.Text("No torrent");
                 }
                 else
                 {
-                    if (ImGui.BeginTable("##trackers-table", TrackersTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                    var selectedFile = _table.DrawData();
+
+                    if (selectedFile is not null)
                     {
-                        _table.DrawHeaders();
-
-                        var selectedFile = _table.DrawData();
-
-                        if (selectedFile is not null)
-                        {
-                            _logger.LogInformation("User selected tracker {index}", selectedFile);
-                        }
-
-                        ImGui.EndTable();
+                        _logger.LogInformation("User selected tracker {index}", selectedFile);
                     }
+
+                    ImGui.EndTable();
                 }
             }
 

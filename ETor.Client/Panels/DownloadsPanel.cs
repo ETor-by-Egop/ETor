@@ -41,18 +41,19 @@ public class DownloadsPanel : IImGuiPanel
                 ImGui.EndDisabled();
             }
 
-            _table.UpdateIfNeeded(_app.SelectedTorrentIndex);
+            if (ImGui.BeginTable("##torrents-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+            {
+                _table.UpdateIfNeeded(_app.SelectedTorrentIndex);
 
-            if (!_table.HasRows)
-            {
-                ImGui.Text("No torrents");
-            }
-            else
-            {
-                if (ImGui.BeginTable("##torrents-table", DownloadsTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                _table.DrawHeaders();
+
+                if (!_table.HasRows)
                 {
-                    _table.DrawHeaders();
-
+                    ImGui.EndTable();
+                    ImGui.Text("No torrents");
+                }
+                else
+                {
                     var selectedRow = _table.DrawData();
 
                     if (selectedRow != _app.SelectedTorrentIndex)

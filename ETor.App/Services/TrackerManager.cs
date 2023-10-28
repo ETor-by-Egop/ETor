@@ -46,14 +46,13 @@ public class TrackerManager : ITrackerManager, IDisposable
             _udpClients[tracker.InternalId] = udpClient;
         }
 
-        var request = new UdpConnectRequest(Random.Shared.Next());
-
         // If a response is not received after 15 * 2 ^ n seconds, the client should retransmit the request,
         // where n starts at 0 and is increased up to 8 (3840 seconds) after every retransmission.
         var waitSeconds = 15 * (int) Math.Pow(2, tracker.MadeAttempts);
 
         using var source = new CancellationTokenSource(waitSeconds * 1000);
 
+        var request = new UdpConnectRequest(Random.Shared.Next());
         byte[] buffer = new byte[request.SerializedSize];
         request.Serialize(buffer);
 

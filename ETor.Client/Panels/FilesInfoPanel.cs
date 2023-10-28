@@ -29,29 +29,31 @@ public class FilesInfoPanel : IImGuiPanel
         if (ImGui.Begin("Files##info-files"))
         {
             var torrent = _app.GetSelectedTorrent();
-            if (torrent is not null)
+
+            if (ImGui.BeginTable("##files-table", FilesTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
             {
-                _table.UpdateIfNeeded(torrent.PieceLength, torrent.Files, null);
-                
+                if (torrent is not null)
+                {
+                    _table.UpdateIfNeeded(torrent.PieceLength, torrent.Files, null);
+                }
+
+                _table.DrawHeaders();
+
                 if (!_table.HasRows)
                 {
-                    ImGui.Text("No torrents");
+                    ImGui.EndTable();
+                    ImGui.Text("No torrent");
                 }
                 else
                 {
-                    if (ImGui.BeginTable("##files-table", FilesTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                    var selectedFile = _table.DrawData();
+
+                    if (selectedFile is not null)
                     {
-                        _table.DrawHeaders();
-
-                        var selectedFile = _table.DrawData();
-
-                        if (selectedFile is not null)
-                        {
-                            _logger.LogInformation("User selected file {index}", selectedFile);
-                        }
-
-                        ImGui.EndTable();
+                        _logger.LogInformation("User selected file {index}", selectedFile);
                     }
+
+                    ImGui.EndTable();
                 }
             }
 

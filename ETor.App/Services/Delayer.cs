@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using ETor.App.Data;
 using ETor.App.DelayedTasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,19 +18,19 @@ public class Delayer : IDelayer
 {
     private readonly IServiceProvider _serviceProvider;
     
-    private readonly PriorityQueue<IDelayedTask, long> _tasks;
+    private readonly ConcurrentPriorityQueue<long, IDelayedTask> _tasks;
     private readonly ILogger<Delayer> _logger;
 
     public Delayer(IServiceProvider serviceProvider, ILogger<Delayer> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
-        _tasks = new PriorityQueue<IDelayedTask, long>(1000);
+        _tasks = new ConcurrentPriorityQueue<long, IDelayedTask>();
     }
 
     public void BeginMonitor(IDelayedTask task, long executeAt)
     {
-        _tasks.Enqueue(task, executeAt);
+        _tasks.Enqueue(executeAt, task);
         _logger.LogInformation("Delayer begin monitoring {task}", task);
     }
 
@@ -41,12 +42,12 @@ public class Delayer : IDelayer
 
     public void Update()
     {
-        if (_tasks.TryPeek(out var task, out var executeAt))
+        if (_tasks.TryPeek(out var executeAt, out var task))
         {
             if (executeAt <= Stopwatch.GetTimestamp())
             {
                 _logger.LogInformation("Delayer processing {task}", task);
-                var _ = _tasks.Dequeue();
+                var _ = _tasks.TryDequeue(out var _);
                 task.ExecuteAsync(this);
             }
         }

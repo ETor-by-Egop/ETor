@@ -49,7 +49,7 @@ public abstract class FilePickerBase
     private void GoToDirectory(DirectoryInfo directory)
     {
         CurrentDirectory = directory;
-        Content = CurrentDirectory.EnumerateFileSystemInfos().Where(ShouldShowFile);
+        Content = CurrentDirectory.EnumerateFileSystemInfos().Where(ShouldShowFile).ToArray();
     }
 
     public bool Show(out string path)
