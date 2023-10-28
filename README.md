@@ -28,6 +28,7 @@ No protocol-related logic is borrowed.
 * `SixLabors.ImageSharp` - only for icons loading
 
 Additional usages:
-`Microsoft.DependencyInjection` for easier app wiring
-`Microsoft.Configuration` for easier configuration
-`Microsoft.Logging` for easier logging
+
+* `Microsoft.DependencyInjection` for easier app wiring
+* `Microsoft.Configuration` for easier configuration
+* `Microsoft.Logging` for easier logging
