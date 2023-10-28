@@ -5,21 +5,23 @@ using ImGuiNET;
 
 namespace ETor.Client.UiValues;
 
-public class PiecesTableRow : ComputedTableRow<PieceData>
+public class TrackersTableRow : ComputedTableRow<TrackerData>
 {
     private int _index;
 
-    private IAutoComputedValueOf<PieceData>[] _columns;
+    private IAutoComputedValueOf<TrackerData>[] _columns;
 
     private bool _isActive;
 
-    public PiecesTableRow(int index)
+    public TrackersTableRow(int index)
     {
         _index = index;
-        _columns = new IAutoComputedValueOf<PieceData>[]
+        _columns = new IAutoComputedValueOf<TrackerData>[]
         {
-            new IndexColumnOf<PieceData>(_index),
-            AutoComputedValue<PieceData>.Of(x => x.Status, x => x.ToString("G"))
+            new IndexColumnOf<TrackerData>(_index),
+            AutoComputedValue<TrackerData>.Of(x => x.Url, x => x),
+            AutoComputedValue<TrackerData>.Of(x => x.Protocol, x => x.ToString("G")),
+            AutoComputedValue<TrackerData>.Of(x => x.Status, x => x.ToString("G"))
         };
     }
 

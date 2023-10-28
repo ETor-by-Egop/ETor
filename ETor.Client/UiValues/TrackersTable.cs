@@ -4,13 +4,13 @@ using ImGuiNET;
 
 namespace ETor.Client.UiValues;
 
-public class PiecesTable
+public class TrackersTable
 {
-    public const int Columns = 2;
+    public const int Columns = 4;
 
-    private List<PiecesTableRow> _rows = new();
+    private List<TrackersTableRow> _rows = new();
 
-    private IReadOnlyList<PieceData> _source = ArraySegment<PieceData>.Empty;
+    private IReadOnlyList<TrackerData> _source = ArraySegment<TrackerData>.Empty;
 
     private int? _lastSelectedIndex = null;
 
@@ -19,6 +19,8 @@ public class PiecesTable
     private static readonly string[] Headers =
     {
         "#",
+        "Url",
+        "Protocol",
         "Status"
     };
 
@@ -39,13 +41,13 @@ public class PiecesTable
         ImGui.PopStyleVar();
     }
 
-    public void UpdateIfNeeded(IReadOnlyList<PieceData> source, int? selectedIndex)
+    public void UpdateIfNeeded(IReadOnlyList<TrackerData> source, int? selectedIndex)
     {
         _source = source;
 
         while (_source.Count > _rows.Count)
         {
-            _rows.Add(new PiecesTableRow(_rows.Count));
+            _rows.Add(new TrackersTableRow(_rows.Count));
         }
 
         while (_rows.Count > _source.Count)

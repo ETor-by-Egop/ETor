@@ -31,7 +31,7 @@ public class PiecesInfoPanel : IImGuiPanel
             var torrent = _app.GetSelectedTorrent();
             if (torrent is not null)
             {
-                _table.UpdateIfNeeded(torrent.PieceLength, torrent.Pieces, null);
+                _table.UpdateIfNeeded(torrent.Pieces, null);
                 
                 if (!_table.HasRows)
                 {

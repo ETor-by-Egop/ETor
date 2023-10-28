@@ -4,6 +4,7 @@ public enum TrackerStatus
 {
     Unknown,
     Unsupported,
+    Connecting,
     Connected,
     Announcing,
     Announced

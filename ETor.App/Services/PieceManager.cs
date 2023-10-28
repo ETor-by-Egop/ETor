@@ -1,4 +1,5 @@
-﻿using ETor.App.Data;
+﻿using System.Security.Cryptography;
+using ETor.App.Data;
 using ETor.Shared;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ public class PieceManager : IPieceManager
         }
 
         Memory<byte> buffer = new byte[torrent.PieceLength];
-        Memory<byte> hashBuffer = new byte[20];
+        Memory<byte> hashBuffer = new byte[SHA1.HashSizeInBytes];
 
         var file = torrent.Files[0];
         var stream = _fileManager.GetStream(torrent, file);

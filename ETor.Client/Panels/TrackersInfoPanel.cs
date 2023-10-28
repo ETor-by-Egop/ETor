@@ -2,6 +2,7 @@
 using ETor.App;
 using ETor.App.Services;
 using ETor.Client.Abstractions;
+using ETor.Client.UiValues;
 using ETor.Shared;
 using ImGuiNET;
 using Microsoft.Extensions.Logging;
@@ -10,27 +11,47 @@ namespace ETor.Client.Panels;
 
 public class TrackersInfoPanel : IImGuiPanel
 {
-    private readonly Application _application;
+    private readonly Application _app;
     private readonly ITrackerManager _trackerManager;
+    private readonly TrackersTable _table;
     private readonly ILogger<DownloadsPanel> _logger;
 
-    public TrackersInfoPanel(ILogger<DownloadsPanel> logger, Application application, ITrackerManager trackerManager)
+    public TrackersInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITrackerManager trackerManager)
     {
         _logger = logger;
-        _application = application;
+        _app = app;
         _trackerManager = trackerManager;
+        _table = new TrackersTable();
     }
 
     public void OnImGuiRender()
     {
         if (ImGui.Begin("Trackers##info-trackers"))
         {
-            var selectedTorrent = _application.GetSelectedTorrent();
-            if (selectedTorrent is not null)
+            var torrent = _app.GetSelectedTorrent();
+            if (torrent is not null)
             {
-                foreach (var tracker in selectedTorrent.Trackers)
+                _table.UpdateIfNeeded(torrent.Trackers, null);
+                
+                if (!_table.HasRows)
                 {
-                    ImGui.Text(tracker.Url);
+                    ImGui.Text("No torrent");
+                }
+                else
+                {
+                    if (ImGui.BeginTable("##trackers-table", TrackersTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+                    {
+                        _table.DrawHeaders();
+
+                        var selectedFile = _table.DrawData();
+
+                        if (selectedFile is not null)
+                        {
+                            _logger.LogInformation("User selected tracker {index}", selectedFile);
+                        }
+
+                        ImGui.EndTable();
+                    }
                 }
             }
 
