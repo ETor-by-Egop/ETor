@@ -5,25 +5,23 @@ using ImGuiNET;
 
 namespace ETor.Client.UiValues;
 
-public class DownloadsTableRow : ComputedTableRow<TorrentData>
+public class PiecesTableRow : ComputedTableRow<PieceData>
 {
     private int _index;
 
-    private IAutoComputedValueOf<TorrentData>[] _columns;
+    private IAutoComputedValueOf<PieceData>[] _columns;
 
     private bool _isActive;
+    private long _pieceLength;
 
-    public DownloadsTableRow(int index)
+    public PiecesTableRow(int index, long pieceLength)
     {
         _index = index;
-        _columns = new IAutoComputedValueOf<TorrentData>[]
+        _pieceLength = pieceLength;
+        _columns = new IAutoComputedValueOf<PieceData>[]
         {
-            new IndexColumnOf<TorrentData>(_index),
-            AutoComputedValue<TorrentData>.Of(x => x.Name, x => x),
-            AutoComputedValue<TorrentData>.Of(x => x.TotalLength, x => x.FormatBytes()),
-            AutoComputedValue<TorrentData>.Of(x => "Added", x => x),
-            AutoComputedValue<TorrentData>.Of(x => 0L, x => x.FormatBytes() + " / s"),
-            AutoComputedValue<TorrentData>.Of(x => 0L, x => x.FormatBytes() + " / s")
+            new IndexColumnOf<PieceData>(_index),
+            AutoComputedValue<PieceData>.Of(x => x.Status, x => x.ToString("G"))
         };
     }
 
@@ -81,5 +79,11 @@ public class DownloadsTableRow : ComputedTableRow<TorrentData>
         {
             column.Fetch(Value);
         }
+    }
+
+    public void UpdateIfNeeded(PieceData? value, long pieceLength)
+    {
+        base.UpdateIfNeeded(value);
+        _pieceLength = pieceLength;
     }
 }

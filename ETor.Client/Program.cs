@@ -8,6 +8,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using Color = System.Drawing.Color;
+// ReSharper disable AccessToDisposedClosure
 
 // this file is mostly a copy of Silk.Net ImGui example + my adaptation from SCVE
 

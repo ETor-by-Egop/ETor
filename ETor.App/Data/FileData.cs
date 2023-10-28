@@ -2,6 +2,8 @@
 
 public class FileData
 {
+    public Guid InternalId { get; set; } = Guid.NewGuid();
+    
     public string Path { get; set; }
 
     public long LengthBytes { get; set; }

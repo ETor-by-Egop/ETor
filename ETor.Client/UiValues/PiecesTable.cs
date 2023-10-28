@@ -1,40 +1,33 @@
-﻿using ETor.App;
+﻿using System.Numerics;
 using ETor.App.Data;
-using ETor.Shared;
 using ImGuiNET;
 
 namespace ETor.Client.UiValues;
 
-public class DownloadsTable
+public class PiecesTable
 {
-    public const int Columns = 6;
+    public const int Columns = 2;
 
-    private List<DownloadsTableRow> _rows = new();
+    private List<PiecesTableRow> _rows = new();
 
-    private IReadOnlyList<TorrentData> _source;
+    private IReadOnlyList<PieceData> _source = ArraySegment<PieceData>.Empty;
 
     private int? _lastSelectedIndex = null;
 
-    public DownloadsTable(IReadOnlyList<TorrentData> source)
-    {
-        _source = source;
-    }
+    public bool HasRows => _rows.Count > 0;
 
     private static readonly string[] Headers =
     {
         "#",
-        "Name",
-        "Size",
-        "Status",
-        "Download",
-        "Upload",
+        "Status"
     };
-
-    public bool HasRows => _rows.Count > 0;
 
     public void DrawHeaders()
     {
-        ImGui.TableSetupColumn(Headers[0], ImGuiTableColumnFlags.None, 0.1f);
+        var padding = ImGui.GetStyle()
+            .CellPadding;
+        ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, padding with {X = 20});
+        ImGui.TableSetupColumn(Headers[0], ImGuiTableColumnFlags.WidthFixed, 15f);
 
         for (var index = 1; index < Headers.Length; index++)
         {
@@ -43,23 +36,27 @@ public class DownloadsTable
         }
 
         ImGui.TableHeadersRow();
+        ImGui.PopStyleVar();
     }
 
-    public void UpdateIfNeeded(int? selectedIndex)
+    public void UpdateIfNeeded(long pieceLength, IReadOnlyList<PieceData> source, int? selectedIndex)
     {
+        _source = source;
+
         while (_source.Count > _rows.Count)
         {
-            _rows.Add(new DownloadsTableRow(_rows.Count));
+            _rows.Add(new PiecesTableRow(_rows.Count, pieceLength));
         }
 
         while (_rows.Count > _source.Count)
         {
             _rows.RemoveAt(_rows.Count - 1);
         }
-        
+
         for (var i = 0; i < _source.Count; i++)
         {
-            _rows[i].UpdateIfNeeded(_source[i]);
+            _rows[i]
+                .UpdateIfNeeded(_source[i], pieceLength);
         }
 
         if (_lastSelectedIndex != selectedIndex)
@@ -91,7 +88,7 @@ public class DownloadsTable
                 selectedIndex = index;
             }
         }
-        
+
         return selectedIndex;
     }
 }

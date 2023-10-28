@@ -1,4 +1,5 @@
-﻿using ETor.App.Data;
+﻿using System.Security.AccessControl;
+using ETor.App.Data;
 using ETor.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -7,11 +8,15 @@ namespace ETor.App.Services;
 
 public interface IFileManager
 {
-    Task CreateFiles(TorrentData torrent);
+    Task EnsureFileExistence(TorrentData torrent);
+
+    FileStream GetStream(TorrentData torrent, FileData file);
 }
 
-public class FileManager : IFileManager
+public class FileManager : IFileManager, IDisposable
 {
+    private readonly Dictionary<Guid, FileStream> _openStreams;
+
     private readonly ILogger<FileManager> _logger;
     private readonly IOptions<FileManagerConfig> _options;
 
@@ -19,9 +24,10 @@ public class FileManager : IFileManager
     {
         _logger = logger;
         _options = options;
+        _openStreams = new Dictionary<Guid, FileStream>();
     }
 
-    public async Task CreateFiles(TorrentData torrent)
+    public async Task EnsureFileExistence(TorrentData torrent)
     {
         var downloadsDirectory = new DirectoryInfo(_options.Value.DownloadPath);
 
@@ -35,26 +41,25 @@ public class FileManager : IFileManager
             var file = torrent.Files[0];
             var fileLength = file.LengthBytes;
 
-            var advanced = new FileStreamOptions
-            {
-                Mode = FileMode.CreateNew,
-                Access = FileAccess.Write,
-                Share = FileShare.None,
-                PreallocationSize = fileLength
-            };
-
             var path = Path.Combine(
                 downloadsDirectory.FullName,
                 file.Path
             );
-            await using var fileStream = new FileStream(path, advanced);
 
-            fileStream.SetLength(fileLength);
+            var fileInfo = new FileInfo(path);
 
-            await fileStream.FlushAsync();
-
-            file.Status = FileStatus.Created;
-            _logger.LogInformation("Created file at {path} of length {length}", path, fileLength);
+            if (!fileInfo.Exists)
+            {
+                var stream = fileInfo.Create();
+                stream.SetLength(fileLength);
+                _openStreams[file.InternalId] = stream;
+                _logger.LogInformation("File created: {path}", path);
+            }
+            else
+            {
+                _openStreams[file.InternalId] = fileInfo.Open(FileMode.Open);
+                _logger.LogInformation("File {path} already exists", path);
+            }
         }
         else
         {
@@ -69,24 +74,41 @@ public class FileManager : IFileManager
             {
                 var fileLength = file.LengthBytes;
 
-                var advanced = new FileStreamOptions
-                {
-                    Mode = FileMode.CreateNew,
-                    Access = FileAccess.Write,
-                    Share = FileShare.None,
-                    PreallocationSize = fileLength
-                };
-
                 var path = Path.Combine(torrentDirectory.FullName, file.Path);
-                await using var fileStream = new FileStream(path, advanced);
 
-                fileStream.SetLength(fileLength);
+                var fileInfo = new FileInfo(path);
 
-                await fileStream.FlushAsync();
-
-                file.Status = FileStatus.Created;
-                _logger.LogInformation("Created file at {path} of length {length}", path, fileLength);
+                if (!fileInfo.Exists)
+                {
+                    var stream = fileInfo.Create();
+                    stream.SetLength(fileLength);
+                    _openStreams[file.InternalId] = stream;
+                    _logger.LogInformation("File created: {path}", path);
+                }
+                else
+                {
+                    _openStreams[file.InternalId] = fileInfo.Open(FileMode.Open);
+                    _logger.LogInformation("File {path} already exists", path);
+                }
             }
+        }
+    }
+
+    public FileStream GetStream(TorrentData torrent, FileData file)
+    {
+        if (_openStreams.TryGetValue(file.InternalId, out var stream))
+        {
+            return stream;
+        }
+
+        throw new InvalidOperationException($"Failed to open stream to torrent file of {torrent.Name}. File {file.Path}.");
+    }
+
+    public void Dispose()
+    {
+        foreach (var key in _openStreams.Keys)
+        {
+            _openStreams[key].Dispose();
         }
     }
 }

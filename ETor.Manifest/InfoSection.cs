@@ -86,6 +86,6 @@ public class InfoSection
 
         var bytes = ms.ToArray();
 
-        return bytes.Sha1();
+        return bytes.AsMemory().Sha1();
     }
 }

@@ -86,7 +86,7 @@ public class FilesTable
         for (var index = 0; index < _rows.Count; index++)
         {
             var row = _rows[index];
-            if (row.Draw())
+            if (row.ImguiDraw())
             {
                 selectedIndex = index;
             }

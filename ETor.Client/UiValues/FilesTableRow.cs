@@ -33,11 +33,12 @@ public class FilesTableRow : ComputedTableRow<FileData>
         _isActive = active;
     }
 
-    public bool Draw()
+    public bool ImguiDraw()
     {
         if (IsDirty)
         {
             Recalculate();
+            IsDirty = false;
         }
 
         ImGui.TableNextRow();

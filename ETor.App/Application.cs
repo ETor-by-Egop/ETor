@@ -3,6 +3,7 @@ using ETor.App.Services;
 using ETor.BEncoding;
 using ETor.Manifest;
 using ETor.Networking;
+using ETor.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace ETor.App;
@@ -70,8 +71,59 @@ public class Application
             : null;
     }
 
-    public async Task CreateFiles(TorrentData torrentData)
+    public async Task StartDownload(TorrentData torrent)
     {
-        await _fileManager.CreateFiles(torrentData);
+        if (torrent.Files.Count == 0)
+        {
+            return;
+        }
+
+        await _fileManager.EnsureFileExistence(torrent);
+
+        if (torrent.Files.Count > 1)
+        {
+            _logger.LogWarning("Failed to start download, because multi-file torrents aren't supported yet");
+        }
+        
+
+        Memory<byte> buffer = new byte[torrent.PieceLength];
+        Memory<byte> hashBuffer = new byte[64];
+
+        var file = torrent.Files[0];
+        var stream = _fileManager.GetStream(torrent, file);
+        var pieces = torrent.Pieces;
+        
+        for (var i = 0; i < pieces.Count; i++)
+        {
+            var piece = pieces[i];
+        
+            var readBytes = await stream.ReadAsync(buffer);
+
+            if (readBytes != torrent.PieceLength)
+            {
+                _logger.LogWarning("Failed to read {pieceLength} bytes from filestream, only read {actual}", torrent.PieceLength, readBytes);
+            }
+
+            buffer.Sha1(hashBuffer);
+
+            if (hashBuffer.Span.SequenceEqual(piece.Hash.Span))
+            {
+                piece.Status = PieceStatus.Good;
+                _logger.LogInformation("Piece {number} is ok at {position}", i, stream.Position);
+            }
+            else
+            {
+                piece.Status = PieceStatus.Bad;
+                _logger.LogInformation("Piece {number} is bad at {position}", i, stream.Position);
+            }
+        }
+
+        // find pieces, that are already downloaded (cache it?)
+        // connect to trackers
+        // announce
+        // connect to peer
+        // download piece
+        // write data to a file
+        // when piece is downloaded, begin next piece
     }
 }
