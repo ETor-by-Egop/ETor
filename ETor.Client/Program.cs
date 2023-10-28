@@ -65,7 +65,7 @@ window.Update += delta =>
     // Make sure ImGui is up-to-date
     controller.Update((float) delta);
 
-    // etorClient.Update(delta);
+    etorClient.Update(delta);
 };
 
 // The render function

@@ -1,90 +1,34 @@
-﻿using System.Net;
-using System.Net.Sockets;
-using ETor.Configuration;
+﻿using System.Net.Sockets;
 using ETor.Networking;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace ETor.App.Services;
 
-public interface IUdpSender
+public static class UdpSender
 {
-    Task<T?> SendReceive<T>(string host, int port, ICanSerialize request)
-        where T : class, ICanDeserialize, new();
-}
-
-public class UdpSender : IUdpSender
-{
-    private readonly IOptions<NetworkConfig> _networkConfig;
-    private readonly ILogger<UdpSender> _logger;
-
-    public UdpSender(ILogger<UdpSender> logger, IOptions<NetworkConfig> networkConfig)
-    {
-        _logger = logger;
-        _networkConfig = networkConfig;
-    }
-
-    public async Task<T?> SendReceive<T>(string host, int port, ICanSerialize request)
+    public static async Task<T?> SendReceive<T>(this UdpClient client, string host, int port, Memory<byte> request, CancellationToken cancellationToken)
         where T : class, ICanDeserialize, new()
     {
         try
         {
-            try
-            {
-                using var udp = new UdpClient();
+            await client.SendAsync(
+                request,
+                host,
+                port,
+                cancellationToken
+            );
 
-                byte[] buffer = new byte[request.SerializedSize];
-                request.Serialize(buffer);
 
-                await udp.SendAsync(
-                    buffer,
-                    buffer.Length,
-                    host,
-                    port
-                );
+            var result = await client.ReceiveAsync(cancellationToken);
 
-                using var source = new CancellationTokenSource(5000);
+            var response = new T();
 
-                var result = await udp.ReceiveAsync(source.Token);
+            response.Deserialize(result.Buffer);
 
-                var response = new T();
-                
-                response.Deserialize(result.Buffer);
-
-                _logger.LogInformation("Received Response: {@response}", response);
-
-                return response;
-            }
-            catch (SocketException ex)
-            {
-                _logger.LogWarning(ex, "could not send message to UDP tracker {host}", host);
-            }
+            return response;
         }
         catch (Exception e)
         {
-            _logger.LogWarning(
-                e,
-                "Failed to connect to {Host}:{Port}.",
-                host,
-                port
-            );
+            return null;
         }
-
-        return null;
-    }
-
-    protected static IPAddress DnsLookup(string hostNameOrAddress)
-    {
-        IPHostEntry hostEntry = Dns.GetHostEntry(hostNameOrAddress);
-
-        IPAddress[] ips = hostEntry.AddressList;
-
-        if (ips.Length == 0)
-        {
-            throw new Exception($"Resolved {ips.Length} ips, which is not supported for host {hostNameOrAddress}");
-        }
-
-        return ips[0]
-            .MapToIPv4();
     }
 }

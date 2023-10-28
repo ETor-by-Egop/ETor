@@ -87,7 +87,7 @@ public class Application
         var checkPiecesTask = _pieceManager.CheckPieces(torrent);
 
         // connect to trackers
-        var connectToTrackersTask = _trackerManager.ConnectToAll(torrent);
+        var connectToTrackersTask = _trackerManager.BeginConnectToAll(torrent);
 
         await Task.WhenAll(checkPiecesTask, connectToTrackersTask);
 

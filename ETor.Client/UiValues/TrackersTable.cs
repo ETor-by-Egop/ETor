@@ -6,7 +6,7 @@ namespace ETor.Client.UiValues;
 
 public class TrackersTable
 {
-    public const int Columns = 6;
+    public const int Columns = 7;
 
     private List<TrackersTableRow> _rows = new();
 
@@ -24,7 +24,8 @@ public class TrackersTable
         "Protocol",
         "Status",
         "Last Connected At",
-        "Connection Id"
+        "Connection Id",
+        "Attempts"
     };
 
     public void DrawHeaders()

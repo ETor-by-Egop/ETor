@@ -20,7 +20,8 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
             AutoComputedValue<TrackerData>.Of(x => x.Protocol, x => x.ToString("G")),
             AutoComputedValue<TrackerData>.Of(x => x.Status, x => x.ToString("G")),
             AutoComputedValue<TrackerData>.Of(x => x.LastConnectedAt, x => x == -1 ? "Never" : x.ToString()),
-            AutoComputedValue<TrackerData>.Of(x => x.ConnectionId, x => x.ToString())
+            AutoComputedValue<TrackerData>.Of(x => x.ConnectionId, x => x.ToString()),
+            AutoComputedValue<TrackerData>.Of(x => x.MadeAttempts, x => x.ToString())
         };
     }
 

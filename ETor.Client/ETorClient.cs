@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using ETor.App;
+using ETor.App.Services;
 using ETor.Client.Abstractions;
 using ETor.Client.Popups;
 using ETor.Shared;
@@ -27,8 +28,8 @@ public class ETorClient
 
     public ImFontPtr OpenSansFont;
 
-
     private List<IImGuiPanel> _imGuiPanels = null!;
+    private IDelayer _delayer = null!;
 
     public ETorClient(IWindow window)
     {
@@ -47,6 +48,7 @@ public class ETorClient
         {
             services.AddSingleton(type);
         }
+
         foreach (var type in AssemblyUtils.GetAssignableTypes<FilePickerBase>())
         {
             services.AddSingleton(type);
@@ -57,7 +59,7 @@ public class ETorClient
         services.AddSingleton<FilePickerData>();
 
         var serviceProvider = services.BuildServiceProvider();
-        
+
         foreach (var requireInit in AssemblyUtils.GetAssignableTypes<IRequireInit>().Select(t => serviceProvider.GetRequiredService(t) as IRequireInit))
         {
             requireInit!.Init();
@@ -66,6 +68,8 @@ public class ETorClient
         _imGuiPanels = panels
             .Select(t => serviceProvider.GetRequiredService(t) as IImGuiPanel)
             .ToList()!;
+
+        _delayer = serviceProvider.GetRequiredService<IDelayer>();
     }
 
     public void OnImGuiRender()
@@ -132,5 +136,10 @@ public class ETorClient
         ImGui.End();
 
         ImGui.PopFont();
+    }
+
+    public void Update(double delta)
+    {
+        _delayer.Update();
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using ETor.App.Services;
+﻿using ETor.App.Services;
 using ETor.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,10 +56,11 @@ public static class Extensions
         services.Configure<FileManagerConfig>(configuration.GetSection(nameof(FileManagerConfig)));
 
         services.AddSingleton<Application>();
-        services.AddSingleton<IUdpSender, UdpSender>();
         services.AddSingleton<ITrackerManager, TrackerManager>();
         services.AddSingleton<IFileManager, FileManager>();
         services.AddSingleton<IPieceManager, PieceManager>();
+
+        services.AddSingleton<IDelayer, Delayer>();
 
         return services;
     }

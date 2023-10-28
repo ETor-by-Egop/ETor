@@ -110,5 +110,7 @@ public class FileManager : IFileManager, IDisposable
         {
             _openStreams[key].Dispose();
         }
+        
+        _openStreams.Clear();
     }
 }

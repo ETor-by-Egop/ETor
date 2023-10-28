@@ -4,6 +4,8 @@ namespace ETor.App.Data;
 
 public class TrackerData : IHashCoded
 {
+    public Guid InternalId { get; set; } = Guid.NewGuid();
+    
     public string Url { get; private set;}
 
     public string Host { get; private set;}
@@ -17,6 +19,8 @@ public class TrackerData : IHashCoded
 
     public long ConnectionId { get; private set; }
     public long HashCode { get; private set; }
+
+    public int MadeAttempts { get; private set; }
 
 
     public TrackerData(string url)
@@ -41,9 +45,28 @@ public class TrackerData : IHashCoded
         };
     }
 
-    public void SetStatus(TrackerStatus status)
+    public void SetFailed()
     {
-        Status = status;
+        Status = TrackerStatus.Failed;
+        HashCode++;
+    }
+
+    public void SetUnsupported()
+    {
+        Status = TrackerStatus.Unsupported;
+        HashCode++;
+    }
+
+    public void SetConnecting()
+    {
+        Status = TrackerStatus.Connecting;
+        HashCode++;
+    }
+
+    public void SetRetrying()
+    {
+        Status = TrackerStatus.Retrying;
+        MadeAttempts++;
         HashCode++;
     }
 
@@ -53,5 +76,12 @@ public class TrackerData : IHashCoded
         Status = TrackerStatus.Connected;
         LastConnectedAt = timestamp;
         HashCode++;
+    }
+
+    public bool IsStillConnected()
+    {
+        const int maxConnectedSeconds = 120;
+
+        return Status == TrackerStatus.Connected && ((Stopwatch.GetTimestamp() - LastConnectedAt) / Stopwatch.Frequency) < maxConnectedSeconds;
     }
 }

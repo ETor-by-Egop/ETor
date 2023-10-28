@@ -56,7 +56,7 @@ public class PieceManager : IPieceManager
             else
             {
                 piece.SetStatus(PieceStatus.Bad);
-                _logger.LogInformation("Piece {number} is bad at {position}", i, stream.Position);
+                // _logger.LogInformation("Piece {number} is bad at {position}", i, stream.Position);
             }
         }
         
