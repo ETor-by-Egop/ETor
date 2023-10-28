@@ -15,7 +15,7 @@ public abstract class FilePickerBase
 
     protected DirectoryInfo CurrentDirectory;
 
-    protected IEnumerable<FileSystemInfo> Content;
+    protected FileSystemInfo[] Content;
 
     private readonly ILogger<FilePickerBase> _logger;
 
@@ -116,8 +116,9 @@ public abstract class FilePickerBase
 
         if (ImGui.BeginChild("FilePickerTree", ImGui.GetContentRegionAvail()))
         {
-            foreach (var entry in Content)
+            for (var i = 0; i < Content.Length; i++)
             {
+                var entry = Content[i];
                 var path = entry.FullName;
                 var name = entry.Name;
                 if (entry.IsDirectory())
