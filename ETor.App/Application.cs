@@ -84,9 +84,13 @@ public class Application
         await _fileManager.EnsureFileExistence(torrent);
 
         // find pieces, that are already downloaded (cache it?)
-        await _pieceManager.CheckPieces(torrent);
+        var checkPiecesTask = _pieceManager.CheckPieces(torrent);
 
         // connect to trackers
+        var connectToTrackersTask = _trackerManager.ConnectToAll(torrent);
+
+        await Task.WhenAll(checkPiecesTask, connectToTrackersTask);
+
         // announce
         // connect to peer
         // download piece

@@ -16,7 +16,8 @@ public class PiecesTable
 
     public bool HasRows => _rows.Count > 0;
 
-    private static readonly string[] Headers =
+    // ReSharper disable once RedundantExplicitArraySize
+    private static readonly string[] Headers = new string[Columns]
     {
         "#",
         "Status"

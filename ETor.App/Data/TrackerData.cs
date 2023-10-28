@@ -2,18 +2,23 @@
 
 namespace ETor.App.Data;
 
-public class TrackerData
+public class TrackerData : IHashCoded
 {
-    public string Url { get; set; }
+    public string Url { get; private set;}
 
-    public TrackerProtocol Protocol { get; set; }
+    public string Host { get; private set;}
+    public int Port { get; private set;}
 
-    public TrackerStatus Status { get; set; }
+    public TrackerProtocol Protocol { get; private set; }
 
-    public long LastConnectedAt { get; set; } = Stopwatch.GetTimestamp();
+    public TrackerStatus Status { get; private set; }
 
-    public long ConnectionId { get; set; }
-    
+    public long LastConnectedAt { get; private set; } = -1;
+
+    public long ConnectionId { get; private set; }
+    public long HashCode { get; private set; }
+
+
     public TrackerData(string url)
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
@@ -22,6 +27,8 @@ public class TrackerData
         }
 
         Url = url;
+        Host = uri.Host;
+        Port = uri.Port;
 
         Protocol = uri.Scheme.ToLower() switch
         {
@@ -32,5 +39,19 @@ public class TrackerData
             "https" => TrackerProtocol.Https,
             _ => throw new ArgumentOutOfRangeException(nameof(uri.Scheme), "Unknown tracker protocol")
         };
+    }
+
+    public void SetStatus(TrackerStatus status)
+    {
+        Status = status;
+        HashCode++;
+    }
+
+    public void SetConnected(long connectionId, long timestamp)
+    {
+        ConnectionId = connectionId;
+        Status = TrackerStatus.Connected;
+        LastConnectedAt = timestamp;
+        HashCode++;
     }
 }

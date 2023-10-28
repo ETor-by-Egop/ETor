@@ -1,16 +1,25 @@
-﻿namespace ETor.Client.UiValues;
+﻿using ETor.App.Data;
+
+namespace ETor.Client.UiValues;
 
 public class ComputedTableRow<T>
+    where T : class, IHashCoded
 {
     protected T? Value;
 
+    private long _computedWithHashCode = -1;
+
     protected bool IsDirty;
 
-    public void UpdateIfNeeded(T? value)
+    public void UpdateIfNeeded(T value)
     {
-        if (Equals(Value, value)) return;
+        var newHashCode = value.HashCode;
 
-        Value = value;
-        IsDirty = true;
+        if (newHashCode != _computedWithHashCode)
+        {
+            _computedWithHashCode = newHashCode;
+            Value = value;
+            IsDirty = true;
+        }
     }
 }

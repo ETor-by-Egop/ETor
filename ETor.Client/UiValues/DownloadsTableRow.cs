@@ -7,18 +7,15 @@ namespace ETor.Client.UiValues;
 
 public class DownloadsTableRow : ComputedTableRow<TorrentData>
 {
-    private int _index;
-
-    private IAutoComputedValueOf<TorrentData>[] _columns;
+    private readonly IAutoComputedValueOf<TorrentData>[] _columns;
 
     private bool _isActive;
 
     public DownloadsTableRow(int index)
     {
-        _index = index;
         _columns = new IAutoComputedValueOf<TorrentData>[]
         {
-            new IndexColumnOf<TorrentData>(_index),
+            new IndexColumnOf<TorrentData>(index),
             AutoComputedValue<TorrentData>.Of(x => x.Name, x => x),
             AutoComputedValue<TorrentData>.Of(x => x.TotalLength, x => x.FormatBytes()),
             AutoComputedValue<TorrentData>.Of(x => "Added", x => x),

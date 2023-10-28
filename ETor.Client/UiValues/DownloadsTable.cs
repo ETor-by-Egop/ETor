@@ -20,7 +20,8 @@ public class DownloadsTable
         _source = source;
     }
 
-    private static readonly string[] Headers =
+    // ReSharper disable once RedundantExplicitArraySize
+    private static readonly string[] Headers = new string[Columns]
     {
         "#",
         "Name",
@@ -56,7 +57,7 @@ public class DownloadsTable
         {
             _rows.RemoveAt(_rows.Count - 1);
         }
-        
+
         for (var i = 0; i < _source.Count; i++)
         {
             _rows[i].UpdateIfNeeded(_source[i]);

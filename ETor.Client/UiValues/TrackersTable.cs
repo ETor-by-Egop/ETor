@@ -6,7 +6,7 @@ namespace ETor.Client.UiValues;
 
 public class TrackersTable
 {
-    public const int Columns = 4;
+    public const int Columns = 6;
 
     private List<TrackersTableRow> _rows = new();
 
@@ -16,12 +16,15 @@ public class TrackersTable
 
     public bool HasRows => _rows.Count > 0;
 
-    private static readonly string[] Headers =
+    // ReSharper disable once RedundantExplicitArraySize
+    private static readonly string[] Headers = new string[Columns]
     {
         "#",
         "Url",
         "Protocol",
-        "Status"
+        "Status",
+        "Last Connected At",
+        "Connection Id"
     };
 
     public void DrawHeaders()

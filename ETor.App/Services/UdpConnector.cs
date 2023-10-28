@@ -7,62 +7,57 @@ using Microsoft.Extensions.Options;
 
 namespace ETor.App.Services;
 
-public interface IUdpConnector
+public interface IUdpSender
 {
-    Task ConnectTo(string host, int port);
+    Task<T?> SendReceive<T>(string host, int port, ICanSerialize request)
+        where T : class, ICanDeserialize, new();
 }
 
-public class UdpConnector : IUdpConnector
+public class UdpSender : IUdpSender
 {
     private readonly IOptions<NetworkConfig> _networkConfig;
-    private readonly ILogger<UdpConnector> _logger;
+    private readonly ILogger<UdpSender> _logger;
 
-    public UdpConnector(ILogger<UdpConnector> logger, IOptions<NetworkConfig> networkConfig)
+    public UdpSender(ILogger<UdpSender> logger, IOptions<NetworkConfig> networkConfig)
     {
         _logger = logger;
         _networkConfig = networkConfig;
     }
 
-    public async Task ConnectTo(string host, int port)
+    public async Task<T?> SendReceive<T>(string host, int port, ICanSerialize request)
+        where T : class, ICanDeserialize, new()
     {
         try
         {
-            // var address = DnsLookup(host);
-            IPEndPoint? any = new IPEndPoint(IPAddress.Any, _networkConfig.Value.Port);
-
             try
             {
-                using (UdpClient udp = new UdpClient())
-                {
-                    udp.Client.SendTimeout = (int) TimeSpan.FromSeconds(5)
-                        .TotalMilliseconds;
-                    udp.Client.ReceiveTimeout = (int) TimeSpan.FromSeconds(15)
-                        .TotalMilliseconds;
+                using var udp = new UdpClient();
 
-                    var request = new UdpConnectRequest(Random.Shared.Next());
+                byte[] buffer = new byte[request.SerializedSize];
+                request.Serialize(buffer);
 
-                    byte[] buffer = new byte[16];
-                    request.Serialize(buffer);
+                await udp.SendAsync(
+                    buffer,
+                    buffer.Length,
+                    host,
+                    port
+                );
 
-                    await udp.SendAsync(
-                        buffer,
-                        buffer.Length,
-                        host,
-                        port
-                    );
+                using var source = new CancellationTokenSource(5000);
 
-                    using var source = new CancellationTokenSource(5000);
+                var result = await udp.ReceiveAsync(source.Token);
 
-                    var result = await udp.ReceiveAsync(source.Token);
+                var response = new T();
+                
+                response.Deserialize(result.Buffer);
 
-                    var response = UdpConnectResponse.Deserialize(result.Buffer);
+                _logger.LogInformation("Received Response: {@response}", response);
 
-                    _logger.LogInformation("Received Response: {@response}", response);
-                }
+                return response;
             }
             catch (SocketException ex)
             {
-                _logger.LogWarning(ex, "could not send message to UDP tracker {host} for torrent", host);
+                _logger.LogWarning(ex, "could not send message to UDP tracker {host}", host);
             }
         }
         catch (Exception e)
@@ -74,6 +69,8 @@ public class UdpConnector : IUdpConnector
                 port
             );
         }
+
+        return null;
     }
 
     protected static IPAddress DnsLookup(string hostNameOrAddress)

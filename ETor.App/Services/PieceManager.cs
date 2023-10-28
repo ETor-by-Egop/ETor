@@ -50,14 +50,16 @@ public class PieceManager : IPieceManager
 
             if (hashBuffer.Span.SequenceEqual(piece.Hash.Span))
             {
-                piece.Status = PieceStatus.Good;
+                piece.SetStatus(PieceStatus.Good);
                 _logger.LogInformation("Piece {number} is ok at {position}", i, stream.Position);
             }
             else
             {
-                piece.Status = PieceStatus.Bad;
+                piece.SetStatus(PieceStatus.Bad);
                 _logger.LogInformation("Piece {number} is bad at {position}", i, stream.Position);
             }
         }
+        
+        _logger.LogInformation("Done checking pieces");
     }
 }

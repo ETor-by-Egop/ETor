@@ -7,20 +7,17 @@ namespace ETor.Client.UiValues;
 
 public class FilesTableRow : ComputedTableRow<FileData>
 {
-    private int _index;
-
-    private IAutoComputedValueOf<FileData>[] _columns;
+    private readonly IAutoComputedValueOf<FileData>[] _columns;
 
     private bool _isActive;
     private long _pieceLength;
 
     public FilesTableRow(int index, long pieceLength)
     {
-        _index = index;
         _pieceLength = pieceLength;
         _columns = new IAutoComputedValueOf<FileData>[]
         {
-            new IndexColumnOf<FileData>(_index),
+            new IndexColumnOf<FileData>(index),
             AutoComputedValue<FileData>.Of(x => x.Path, x => x),
             AutoComputedValue<FileData>.Of(x => x.LengthBytes, x => x.FormatBytes()),
             AutoComputedValue<FileData>.Of(x => x.Status, x => x.ToString("G")),

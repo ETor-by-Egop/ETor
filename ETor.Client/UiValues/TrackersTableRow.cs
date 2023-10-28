@@ -7,21 +7,20 @@ namespace ETor.Client.UiValues;
 
 public class TrackersTableRow : ComputedTableRow<TrackerData>
 {
-    private int _index;
-
-    private IAutoComputedValueOf<TrackerData>[] _columns;
+    private readonly IAutoComputedValueOf<TrackerData>[] _columns;
 
     private bool _isActive;
 
     public TrackersTableRow(int index)
     {
-        _index = index;
         _columns = new IAutoComputedValueOf<TrackerData>[]
         {
-            new IndexColumnOf<TrackerData>(_index),
+            new IndexColumnOf<TrackerData>(index),
             AutoComputedValue<TrackerData>.Of(x => x.Url, x => x),
             AutoComputedValue<TrackerData>.Of(x => x.Protocol, x => x.ToString("G")),
-            AutoComputedValue<TrackerData>.Of(x => x.Status, x => x.ToString("G"))
+            AutoComputedValue<TrackerData>.Of(x => x.Status, x => x.ToString("G")),
+            AutoComputedValue<TrackerData>.Of(x => x.LastConnectedAt, x => x == -1 ? "Never" : x.ToString()),
+            AutoComputedValue<TrackerData>.Of(x => x.ConnectionId, x => x.ToString())
         };
     }
 

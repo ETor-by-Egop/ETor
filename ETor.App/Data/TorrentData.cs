@@ -2,7 +2,7 @@
 
 namespace ETor.App.Data;
 
-public class TorrentData
+public class TorrentData : IHashCoded
 {
     private readonly List<TrackerData> _trackers;
 
@@ -20,15 +20,16 @@ public class TorrentData
 
     public long PieceLength { get; private set; }
 
-    public long TotalLength { get; set; }
+    public long TotalLength { get; private set; }
 
-    public string? CreatedBy { get; set; }
+    public string? CreatedBy { get; private set; }
 
-    public DateTime? CreationDate { get; set; }
+    public DateTime? CreationDate { get; private set; }
 
-    public string? Comment { get; set; }
+    public string? Comment { get; private set; }
+    public string? Encoding { get; private set; }
 
-    public string? Encoding { get; set; }
+    public long HashCode { get; private set; }
 
     public TorrentData(TorrentManifest manifest, string filePath)
     {
@@ -52,7 +53,7 @@ public class TorrentData
         _pieces = new List<PieceData>(manifest.Info.Pieces.Length / 20); // each piece in manifest is 20 bytes SHA1 of it's data
 
         PieceLength = manifest.Info.PieceLength.Value;
-        
+
         if (!string.IsNullOrEmpty(manifest.Announce))
         {
             _trackers.Add(new TrackerData(manifest.Announce));

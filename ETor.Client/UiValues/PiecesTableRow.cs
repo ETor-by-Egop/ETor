@@ -7,18 +7,15 @@ namespace ETor.Client.UiValues;
 
 public class PiecesTableRow : ComputedTableRow<PieceData>
 {
-    private int _index;
-
-    private IAutoComputedValueOf<PieceData>[] _columns;
+    private readonly IAutoComputedValueOf<PieceData>[] _columns;
 
     private bool _isActive;
 
     public PiecesTableRow(int index)
     {
-        _index = index;
         _columns = new IAutoComputedValueOf<PieceData>[]
         {
-            new IndexColumnOf<PieceData>(_index),
+            new IndexColumnOf<PieceData>(index),
             AutoComputedValue<PieceData>.Of(x => x.Status, x => x.ToString("G"))
         };
     }
