@@ -92,6 +92,7 @@ public class Application
         await Task.WhenAll(checkPiecesTask, connectToTrackersTask);
 
         // announce
+        await _trackerManager.BeginAnnounceToAll(torrent);
         // connect to peer
         // download piece
         // write data to a file

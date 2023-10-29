@@ -78,6 +78,18 @@ public class TrackerData : IHashCoded
         HashCode++;
     }
 
+    public void SetAnnouncing()
+    {
+        Status = TrackerStatus.Announcing;
+        HashCode++;
+    }
+
+    public void SetAnnounced()
+    {
+        Status = TrackerStatus.Announced;
+        HashCode++;
+    }
+
     public bool IsStillConnected()
     {
         const int maxConnectedSeconds = 120;

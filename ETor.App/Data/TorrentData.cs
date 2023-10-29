@@ -29,6 +29,8 @@ public class TorrentData : IHashCoded
     public string? Comment { get; private set; }
     public string? Encoding { get; private set; }
 
+    public Memory<byte> InfoHash { get; set; }
+
     public long HashCode { get; private set; }
 
     public TorrentData(TorrentManifest manifest, string filePath)
@@ -116,5 +118,7 @@ public class TorrentData : IHashCoded
         CreationDate = manifest.CreationDate;
         Comment = manifest.Comment;
         Encoding = manifest.Encoding;
+
+        InfoHash = manifest.Info.ComputeSha1();
     }
 }

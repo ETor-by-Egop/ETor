@@ -15,7 +15,7 @@ No protocol-related logic is borrowed.
 * Single-file and multi-file `.torrent` file support
 * File on-disk allocation
 * Pieces check from disk
-* UDP Trackers connection (currently no announcing)
+* UDP Trackers connection
 * Auto reconnection to tracker on failure
 
 ## Uses

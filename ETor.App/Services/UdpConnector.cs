@@ -17,7 +17,6 @@ public static class UdpSender
                 cancellationToken
             );
 
-
             var result = await client.ReceiveAsync(cancellationToken);
 
             var response = new T();

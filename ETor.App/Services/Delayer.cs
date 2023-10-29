@@ -12,6 +12,7 @@ public interface IDelayer
     void BeginMonitor(IDelayedTask task, long executeAt);
     Task ReconnectToTracker(TrackerData tracker);
     void Update();
+    Task ReannounceToTrackerTask(TorrentData torrent, TrackerData tracker);
 }
 
 public class Delayer : IDelayer
@@ -38,6 +39,12 @@ public class Delayer : IDelayer
     {
         _logger.LogInformation("Delayer reconnecting tracker {url}", tracker.Url);
         await _serviceProvider.GetRequiredService<ITrackerManager>().BeginConnect(tracker);
+    }
+
+    public async Task ReannounceToTrackerTask(TorrentData torrent, TrackerData tracker)
+    {
+        _logger.LogInformation("Delayer reannouncing tracker {torrent} - {url}", torrent.Name, tracker.Url);
+        await _serviceProvider.GetRequiredService<ITrackerManager>().BeginAnnounce(torrent, tracker);
     }
 
     public void Update()

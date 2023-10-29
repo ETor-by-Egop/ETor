@@ -21,20 +21,15 @@ public class UdpConnectResponse : ICanDeserialize
         ConnectionId = connectionId;
     }
 
-    public void Deserialize(Span<byte> buffer)
+    public void Deserialize(Memory<byte> buffer)
     {
         if (buffer.Length < 16)
         {
             throw new InvalidOperationException($"Received UdpConnectResponse less than 16 bytes. Was {buffer.Length}");
         }
 
-        Action = BinaryPrimitives.ReadInt32BigEndian(buffer);
-        TransactionId = BinaryPrimitives.ReadInt32BigEndian(buffer[4..]);
-        ConnectionId = BinaryPrimitives.ReadInt64BigEndian(buffer[8..]);
+        Action = BinaryPrimitives.ReadInt32BigEndian(buffer.Span);
+        TransactionId = BinaryPrimitives.ReadInt32BigEndian(buffer[4..].Span);
+        ConnectionId = BinaryPrimitives.ReadInt64BigEndian(buffer[8..].Span);
     }
-}
-
-public interface ICanDeserialize
-{
-    void Deserialize(Span<byte> buffer);
 }
