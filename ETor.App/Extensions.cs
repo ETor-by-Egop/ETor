@@ -60,8 +60,6 @@ public static class Extensions
         services.AddSingleton<IFileManager, FileManager>();
         services.AddSingleton<IPieceManager, PieceManager>();
 
-        services.AddSingleton<IDelayer, Delayer>();
-
         return services;
     }
 }

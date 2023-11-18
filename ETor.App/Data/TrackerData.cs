@@ -15,12 +15,8 @@ public class TrackerData : IHashCoded
 
     public TrackerStatus Status { get; private set; }
 
-    public long LastConnectedAt { get; private set; } = -1;
-
     public long ConnectionId { get; private set; }
     public long HashCode { get; private set; }
-
-    public int MadeAttempts { get; private set; }
 
 
     public TrackerData(string url)
@@ -66,15 +62,13 @@ public class TrackerData : IHashCoded
     public void SetRetrying()
     {
         Status = TrackerStatus.Retrying;
-        MadeAttempts++;
         HashCode++;
     }
 
-    public void SetConnected(long connectionId, long timestamp)
+    public void SetConnected(long connectionId)
     {
         ConnectionId = connectionId;
         Status = TrackerStatus.Connected;
-        LastConnectedAt = timestamp;
         HashCode++;
     }
 
@@ -88,12 +82,5 @@ public class TrackerData : IHashCoded
     {
         Status = TrackerStatus.Announced;
         HashCode++;
-    }
-
-    public bool IsStillConnected()
-    {
-        const int maxConnectedSeconds = 120;
-
-        return Status == TrackerStatus.Connected && ((Stopwatch.GetTimestamp() - LastConnectedAt) / Stopwatch.Frequency) < maxConnectedSeconds;
     }
 }

@@ -34,7 +34,7 @@ public class TrackersInfoPanel : IImGuiPanel
             {
                 if (torrent is not null)
                 {
-                    _table.UpdateIfNeeded(torrent.Trackers, null);
+                    _table.UpdateIfNeeded(torrent.Trackers, null, _trackerManager.MonitoringThreads);
                 }
 
                 _table.DrawHeaders();

@@ -10,6 +10,7 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
     private readonly IAutoComputedValueOf<TrackerData>[] _columns;
 
     private bool _isActive;
+    private TrackerMonitoringThread? _thread;
 
     public TrackersTableRow(int index)
     {
@@ -19,9 +20,9 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
             AutoComputedValue<TrackerData>.Of(x => x.Url, x => x),
             AutoComputedValue<TrackerData>.Of(x => x.Protocol, x => x.ToString("G")),
             AutoComputedValue<TrackerData>.Of(x => x.Status, x => x.ToString("G")),
-            AutoComputedValue<TrackerData>.Of(x => x.LastConnectedAt, x => x == -1 ? "Never" : x.ToString()),
             AutoComputedValue<TrackerData>.Of(x => x.ConnectionId, x => x.ToString()),
-            AutoComputedValue<TrackerData>.Of(x => x.MadeAttempts, x => x.ToString())
+            NoComputeValue<TrackerData>.Of(() => _thread?.LastConnectAttempts, x => x?.ToString() ?? "unknown"),
+            NoComputeValue<TrackerData>.Of(() => _thread?.LastAnnounceAttempts, x => x?.ToString() ?? "unknown"),
         };
     }
 
@@ -77,5 +78,11 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
         {
             column.Fetch(Value);
         }
+    }
+
+    public void UpdateIfNeeded(TrackerData value, TrackerMonitoringThread? thread)
+    {
+        base.UpdateIfNeeded(value);
+        _thread = thread;
     }
 }

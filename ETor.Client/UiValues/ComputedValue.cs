@@ -49,6 +49,14 @@ public class AutoComputedValue<TObject>
     }
 }
 
+public class NoComputeValue<TObject>
+{
+    public static AutoComputedValue<TObject, T> Of<T>(Func<T> value, Func<T, string> converter)
+    {
+        return new AutoComputedValue<TObject, T>(_ => value(), converter);
+    }
+}
+
 public class AutoComputedValue<TObject, T> : ComputedValue<T>, IAutoComputedValueOf<TObject>
 {
     private Func<TObject?, T?> _accessor;

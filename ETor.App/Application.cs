@@ -87,12 +87,11 @@ public class Application
         var checkPiecesTask = _pieceManager.CheckPieces(torrent);
 
         // connect to trackers
-        var connectToTrackersTask = _trackerManager.BeginConnectToAll(torrent);
 
-        await Task.WhenAll(checkPiecesTask, connectToTrackersTask);
+        await Task.WhenAll(checkPiecesTask);
 
         // announce
-        await _trackerManager.BeginAnnounceToAll(torrent);
+        _trackerManager.StartAll(torrent);
         // connect to peer
         // download piece
         // write data to a file
