@@ -15,8 +15,8 @@ namespace ETor.Client;
 public class ETorClient
 {
     private readonly IWindow _window;
-    public GL GL { get; set; }
-    public IInputContext Input { get; set; }
+    public GL GL { get; set; } = null!;
+    public IInputContext Input { get; set; } = null!;
 
     public static ETorClient Instance;
 

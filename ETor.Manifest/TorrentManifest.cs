@@ -66,7 +66,7 @@ public class TorrentManifest
         {
             if (announceListItem is BEncodeString str)
             {
-                AnnounceList.Add(str.Value.ToString());
+                AnnounceList!.Add(str.Value.ToString());
             }
             else if (announceListItem is BEncodeList list)
             {

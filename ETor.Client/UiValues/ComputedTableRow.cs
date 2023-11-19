@@ -5,7 +5,7 @@ namespace ETor.Client.UiValues;
 public class ComputedTableRow<T>
     where T : class, IHashCoded
 {
-    protected T? Value;
+    protected T Value = null!;
 
     private long _computedWithHashCode = -1;
 

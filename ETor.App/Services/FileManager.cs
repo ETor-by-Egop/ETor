@@ -52,6 +52,7 @@ public class FileManager : IFileManager, IDisposable
             {
                 var stream = fileInfo.Create();
                 stream.SetLength(fileLength);
+                await stream.FlushAsync();
                 _openStreams[file.InternalId] = stream;
                 _logger.LogInformation("File created: {path}", path);
             }
@@ -82,6 +83,7 @@ public class FileManager : IFileManager, IDisposable
                 {
                     var stream = fileInfo.Create();
                     stream.SetLength(fileLength);
+                    await stream.FlushAsync();
                     _openStreams[file.InternalId] = stream;
                     _logger.LogInformation("File created: {path}", path);
                 }

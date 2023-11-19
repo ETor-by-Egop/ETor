@@ -2,7 +2,7 @@
 
 public abstract class ComputedValue<T>
 {
-    protected T? Value;
+    protected T Value = default!;
     
     protected bool IsDirty = true;
     protected string Computed { get; set; } = "";
@@ -27,8 +27,10 @@ public abstract class ComputedValue<T>
 
     public void UpdateIfNeeded(T? value)
     {
-        if (Equals(Value, value)) return;
+        if (value is null) return;
 
+        if (Equals(Value, value)) return;
+        
         Value = value;
         IsDirty = true;
     }
@@ -36,14 +38,14 @@ public abstract class ComputedValue<T>
 
 public interface IAutoComputedValueOf<in TObject>
 {
-    public void Fetch(TObject? value);
+    public void Fetch(TObject value);
 
     public string Get();
 }
 
 public class AutoComputedValue<TObject>
 {
-    public static AutoComputedValue<TObject, T> Of<T>(Func<TObject?, T?> accessor, Func<T?, string> converter)
+    public static AutoComputedValue<TObject, T> Of<T>(Func<TObject, T?> accessor, Func<T, string> converter)
     {
         return new AutoComputedValue<TObject, T>(accessor, converter);
     }
@@ -59,10 +61,10 @@ public class NoComputeValue<TObject>
 
 public class AutoComputedValue<TObject, T> : ComputedValue<T>, IAutoComputedValueOf<TObject>
 {
-    private Func<TObject?, T?> _accessor;
-    private readonly Func<T?, string> _converter;
+    private Func<TObject, T?> _accessor;
+    private readonly Func<T, string> _converter;
 
-    public AutoComputedValue(Func<TObject?, T?> accessor, Func<T?, string> converter)
+    public AutoComputedValue(Func<TObject, T?> accessor, Func<T, string> converter)
     {
         _accessor = accessor;
         _converter = converter;
@@ -73,7 +75,7 @@ public class AutoComputedValue<TObject, T> : ComputedValue<T>, IAutoComputedValu
         return _converter(Value);
     }
 
-    public void Fetch(TObject? value)
+    public void Fetch(TObject value)
     {
         UpdateIfNeeded(_accessor(value));
     }

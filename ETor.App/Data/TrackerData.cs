@@ -20,6 +20,9 @@ public class TrackerData : IHashCoded
     public long ConnectionId { get; private set; }
     public long HashCode { get; private set; }
 
+    /// <summary>
+    /// Announce interval in seconds
+    /// </summary>
     public long UpdateInterval { get; private set; }
 
 

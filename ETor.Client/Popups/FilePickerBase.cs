@@ -13,9 +13,9 @@ public abstract class FilePickerBase
 {
     private const string ImguiId = "File Picker##file-picker";
 
-    protected DirectoryInfo CurrentDirectory;
+    protected DirectoryInfo CurrentDirectory = null!;
 
-    protected FileSystemInfo[] Content;
+    protected FileSystemInfo[] Content = null!;
 
     private readonly ILogger<FilePickerBase> _logger;
 

@@ -13,12 +13,12 @@ public class GeneralInfoPanel : IImGuiPanel
     private readonly Application _application;
 
     private int? _lastDisplayedTorrentIndex;
-    private string _torrentPath;
-    private string _length;
-    private string _name;
-    private string _pieceLength;
-    private string _pieces;
-    private string _fileCount;
+    private string _torrentPath = "";
+    private string _length = "";
+    private string _name = "";
+    private string _pieceLength = "";
+    private string _pieces = "";
+    private string _fileCount = "";
 
     public GeneralInfoPanel(Application application)
     {

@@ -79,7 +79,7 @@ public class PeersTableRow : ComputedTableRow<PeerData>
         }
     }
 
-    public void UpdateIfNeeded(PeerData peerData, Peer peer)
+    public void UpdateIfNeeded(PeerData peerData, Peer? peer)
     {
         base.UpdateIfNeeded(peerData);
         _peer = peer;

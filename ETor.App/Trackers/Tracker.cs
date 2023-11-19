@@ -13,12 +13,16 @@ public abstract class Tracker
 
     public Tracker(TrackerData trackerData, Memory<byte> peerId, Memory<byte> torrentInfoHash, short listeningPort, ILogger<Tracker> logger)
     {
-        UpdateInterval = TimeSpan.FromMinutes(10);
         TrackerData = trackerData;
         TorrentInfoHash = torrentInfoHash;
         ListeningPort = listeningPort;
         _logger = logger;
         PeerId = peerId;
+        
+        _timer = new Timer();
+        _timer.Interval = TimeSpan.FromSeconds(1)
+            .TotalMilliseconds;
+        _timer.Elapsed += Timer_Elapsed;
     }
 
     public Memory<byte> PeerId { get; set; }
@@ -28,8 +32,6 @@ public abstract class Tracker
     public Memory<byte> TorrentInfoHash { get; set; }
 
     public TrackerData TrackerData { get; set; }
-
-    public TimeSpan UpdateInterval { get; set; }
     public int WantedPeerCount { get; set; }
     public long Left { get; set; }
     public long Downloaded { get; set; }
@@ -47,10 +49,6 @@ public abstract class Tracker
 
         OnStart();
 
-        _timer = new System.Timers.Timer();
-        _timer.Interval = TimeSpan.FromSeconds(1)
-            .TotalMilliseconds;
-        _timer.Elapsed += Timer_Elapsed;
         _timer.Enabled = true;
         _timer.Start();
     }
@@ -62,7 +60,7 @@ public abstract class Tracker
 
         OnAnnounce();
 
-        _timer.Interval = UpdateInterval.TotalMilliseconds;
+        _timer.Interval = TrackerData.UpdateInterval;
     }
 
     protected abstract Task OnStart();

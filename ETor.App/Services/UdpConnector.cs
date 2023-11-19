@@ -24,7 +24,7 @@ public static class UdpSender
 
             return response;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }
