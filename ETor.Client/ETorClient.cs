@@ -29,7 +29,6 @@ public class ETorClient
     public ImFontPtr OpenSansFont;
 
     private List<IImGuiPanel> _imGuiPanels = null!;
-    private IDelayer _delayer = null!;
 
     public ETorClient(IWindow window)
     {
@@ -68,8 +67,6 @@ public class ETorClient
         _imGuiPanels = panels
             .Select(t => serviceProvider.GetRequiredService(t) as IImGuiPanel)
             .ToList()!;
-
-        _delayer = serviceProvider.GetRequiredService<IDelayer>();
     }
 
     public void OnImGuiRender()
@@ -140,6 +137,5 @@ public class ETorClient
 
     public void Update(double delta)
     {
-        _delayer.Update();
     }
 }

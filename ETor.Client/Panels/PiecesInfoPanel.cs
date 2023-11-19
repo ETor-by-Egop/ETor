@@ -12,15 +12,15 @@ namespace ETor.Client.Panels;
 public class PiecesInfoPanel : IImGuiPanel
 {
     private readonly Application _app;
-    private readonly ITrackerManager _trackerManager;
+    private readonly ITransferManager _transferManager;
     private readonly PiecesTable _table;
     private readonly ILogger<DownloadsPanel> _logger;
 
-    public PiecesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITrackerManager trackerManager)
+    public PiecesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITransferManager transferManager)
     {
         _logger = logger;
         _app = app;
-        _trackerManager = trackerManager;
+        _transferManager = transferManager;
         _table = new PiecesTable();
     }
 
