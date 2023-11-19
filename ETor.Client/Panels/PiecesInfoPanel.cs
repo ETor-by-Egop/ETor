@@ -14,9 +14,9 @@ public class PiecesInfoPanel : IImGuiPanel
     private readonly Application _app;
     private readonly ITransferManager _transferManager;
     private readonly PiecesTable _table;
-    private readonly ILogger<DownloadsPanel> _logger;
+    private readonly ILogger<PiecesInfoPanel> _logger;
 
-    public PiecesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITransferManager transferManager)
+    public PiecesInfoPanel(ILogger<PiecesInfoPanel> logger, Application app, ITransferManager transferManager)
     {
         _logger = logger;
         _app = app;

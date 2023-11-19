@@ -9,32 +9,33 @@ using Microsoft.Extensions.Logging;
 
 namespace ETor.Client.Panels;
 
-public class TrackersInfoPanel : IImGuiPanel
+public class PeersInfoPanel : IImGuiPanel
 {
     private readonly Application _app;
     private readonly ITransferManager _transferManager;
-    private readonly TrackersTable _table;
-    private readonly ILogger<TrackersInfoPanel> _logger;
+    private readonly PeersTable _table;
+    private readonly ILogger<PeersInfoPanel> _logger;
 
-    public TrackersInfoPanel(ILogger<TrackersInfoPanel> logger, Application app, ITransferManager transferManager)
+    public PeersInfoPanel(ILogger<PeersInfoPanel> logger, Application app, ITransferManager transferManager)
     {
         _logger = logger;
         _app = app;
         _transferManager = transferManager;
-        _table = new TrackersTable();
+        _table = new PeersTable();
     }
 
     public void OnImGuiRender()
     {
-        if (ImGui.Begin("Trackers##info-trackers"))
+        if (ImGui.Begin("Peers##info-peers"))
         {
             var torrent = _app.GetSelectedTorrent();
 
-            if (ImGui.BeginTable("##trackers-table", TrackersTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
+            if (ImGui.BeginTable("##peers-table", PeersTable.Columns, ImGuiTableFlags.RowBg | ImGuiTableFlags.Resizable | ImGuiTableFlags.NoBordersInBodyUntilResize))
             {
                 if (torrent is not null)
                 {
-                    _table.UpdateIfNeeded(torrent.Trackers, null, _transferManager.Transfers);
+                    _transferManager.Transfers.TryGetValue(torrent.InternalId, out var transfer);
+                    _table.UpdateIfNeeded(torrent.Peers, transfer, null);
                 }
 
                 _table.DrawHeaders();
@@ -46,11 +47,11 @@ public class TrackersInfoPanel : IImGuiPanel
                 }
                 else
                 {
-                    var selectedFile = _table.DrawData();
+                    var selectedPeer = _table.DrawData();
 
-                    if (selectedFile is not null)
+                    if (selectedPeer is not null)
                     {
-                        _logger.LogInformation("User selected tracker {index}", selectedFile);
+                        _logger.LogInformation("User selected peer {index}", selectedPeer);
                     }
 
                     ImGui.EndTable();

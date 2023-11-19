@@ -1,15 +1,18 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿using System.Buffers.Binary;
+using System.Collections;
 using ETor.App.Data;
 using ETor.App.Trackers;
 using Microsoft.Extensions.Logging;
 
 namespace ETor.App;
 
-public class Transfer
+/// <summary>
+/// Represents active torrent downloading, encapsulates trackers and peers, related to an instance of a torrent
+/// </summary>
+public class TorrentTransfer
 {
     private readonly TorrentData _torrent;
-    private readonly ILogger<Transfer> _logger;
+    private readonly ILogger<TorrentTransfer> _logger;
 
     public Memory<byte> PeerId { get; } = "ETor Alpha 0.0.1 Egop"u8.ToArray();
 
@@ -18,28 +21,27 @@ public class Transfer
     /// </summary>
     public IDictionary<Guid, Tracker> Trackers { get; } = new Dictionary<Guid, Tracker>();
 
+    public IDictionary<long, Peer> Peers { get; } = new Dictionary<long, Peer>();
+
     public long Downloaded { get; set; }
 
     public DateTime StartTime { get; private set; }
 
-    public Transfer(TorrentData torrent, ILoggerFactory loggerFactory)
+    public TorrentTransfer(TorrentData torrent, ILoggerFactory loggerFactory)
     {
         _torrent = torrent;
-        _logger = loggerFactory.CreateLogger<Transfer>();
+        _logger = loggerFactory.CreateLogger<TorrentTransfer>();
 
-        
-        // initialize trackers
         foreach (var trackerData in torrent.Trackers)
         {
             Tracker? tracker = null;
-            if (trackerData.Uri.Scheme == "http" ||
-                trackerData.Uri.Scheme == "https")
+            if (trackerData.Uri.Scheme is "http" or "https")
             {
                 // tracker = new HttpTracker(trackerUri, this.PeerId, torrentInfo.InfoHash, listeningPort);
             }
             else if (trackerData.Uri.Scheme == "udp")
             {
-                tracker = new UdpTracker(trackerData, this.PeerId, torrent.InfoHash, 6969, loggerFactory.CreateLogger<Tracker>());
+                tracker = new UdpTracker(trackerData, PeerId, torrent.InfoHash, 6969, loggerFactory.CreateLogger<Tracker>());
             }
 
             if (tracker != null)
@@ -64,7 +66,7 @@ public class Transfer
 
     public void Start()
     {
-        this.StartTime = DateTime.UtcNow;
+        StartTime = DateTime.UtcNow;
 
         _logger.LogInformation("starting torrent manager for torrent {name}", _torrent.Name);
 
@@ -97,6 +99,34 @@ public class Transfer
         _logger.LogInformation("Tracker announced {uri}, {@data}", tracker.Uri, e);
         tracker.SetAnnounced();
         tracker.SetUpdateInterval(e.Interval);
+        
+        // 6 = 4 bytes ip + 2 bytes port
+        for (int i = 0; i < e.IpPortPairs.Length; i += 6)
+        {
+            var ip = BinaryPrimitives.ReadInt32BigEndian(
+                e.IpPortPairs.Slice(i, 4)
+                    .Span
+            );
+            var port = BinaryPrimitives.ReadInt16BigEndian(
+                e.IpPortPairs.Slice(i + 4, 2)
+                    .Span
+            );
+
+            var id = (long)ip << 16 | (ushort) port;
+            if (Peers.ContainsKey(id))
+            {
+                _logger.LogInformation("Peer {ip}:{port} is already known", ip, port);
+            }
+            else
+            {
+                var peerData = new PeerData(
+                    e.IpPortPairs.Slice(i, 6)
+                );
+                var peer = new Peer(peerData);
+                Peers[peerData.Address] = peer;
+                _torrent.AddPeer(peerData);
+            }
+        }
     }
 
     private void Tracker_Announcing(TrackerData tracker)

@@ -58,7 +58,7 @@ public static class Extensions
         services.AddSingleton<Application>();
         services.AddSingleton<ITransferManager, TransferManager>();
         services.AddSingleton<IFileManager, FileManager>();
-        services.AddSingleton<IPieceManager, PieceManager>();
+        services.AddSingleton<IPersistenceManager, PersistenceManager>();
 
         return services;
     }

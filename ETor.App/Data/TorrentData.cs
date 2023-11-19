@@ -11,10 +11,12 @@ public class TorrentData : IHashCoded
     private readonly List<FileData> _files;
 
     private readonly List<PieceData> _pieces;
+    private readonly List<PeerData> _peers;
 
     public IReadOnlyList<TrackerData> Trackers => _trackers;
     public IReadOnlyList<FileData> Files => _files;
     public IReadOnlyList<PieceData> Pieces => _pieces;
+    public IReadOnlyList<PeerData> Peers => _peers;
 
     public string Name { get; private set; }
 
@@ -55,6 +57,7 @@ public class TorrentData : IHashCoded
         _trackers = new List<TrackerData>();
         _files = new List<FileData>();
         _pieces = new List<PieceData>(manifest.Info.Pieces.Length / 20); // each piece in manifest is 20 bytes SHA1 of it's data
+        _peers = new List<PeerData>();
 
         PieceLength = manifest.Info.PieceLength.Value;
 
@@ -122,5 +125,10 @@ public class TorrentData : IHashCoded
         Encoding = manifest.Encoding;
 
         InfoHash = manifest.Info.ComputeSha1();
+    }
+
+    public void AddPeer(PeerData peerData)
+    {
+        _peers.Add(peerData);
     }
 }

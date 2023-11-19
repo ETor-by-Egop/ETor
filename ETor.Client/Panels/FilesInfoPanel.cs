@@ -14,9 +14,9 @@ public class FilesInfoPanel : IImGuiPanel
     private readonly Application _app;
     private readonly ITransferManager _transferManager;
     private readonly FilesTable _table;
-    private readonly ILogger<DownloadsPanel> _logger;
+    private readonly ILogger<FilesInfoPanel> _logger;
 
-    public FilesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITransferManager transferManager)
+    public FilesInfoPanel(ILogger<FilesInfoPanel> logger, Application app, ITransferManager transferManager)
     {
         _logger = logger;
         _app = app;

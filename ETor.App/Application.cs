@@ -12,7 +12,7 @@ public class Application
 {
     private readonly ITransferManager _transferManager;
     private readonly IFileManager _fileManager;
-    private readonly IPieceManager _pieceManager;
+    private readonly IPersistenceManager _persistenceManager;
 
     private readonly List<TorrentData> _torrents;
 
@@ -22,12 +22,12 @@ public class Application
 
     private readonly ILogger<Application> _logger;
 
-    public Application(ITransferManager transferManager, ILogger<Application> logger, IFileManager fileManager, IPieceManager pieceManager)
+    public Application(ITransferManager transferManager, ILogger<Application> logger, IFileManager fileManager, IPersistenceManager persistenceManager)
     {
         _transferManager = transferManager;
         _logger = logger;
         _fileManager = fileManager;
-        _pieceManager = pieceManager;
+        _persistenceManager = persistenceManager;
 
         _torrents = new List<TorrentData>();
     }
@@ -84,7 +84,7 @@ public class Application
         await _fileManager.EnsureFileExistence(torrent);
 
         // find pieces, that are already downloaded (cache it?)
-        var checkPiecesTask = _pieceManager.CheckPieces(torrent);
+        var checkPiecesTask = _persistenceManager.CheckPieces(torrent);
 
         // connect to trackers
 

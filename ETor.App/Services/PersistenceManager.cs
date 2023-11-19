@@ -5,17 +5,17 @@ using Microsoft.Extensions.Logging;
 
 namespace ETor.App.Services;
 
-public interface IPieceManager
+public interface IPersistenceManager
 {
     Task CheckPieces(TorrentData torrent);
 }
 
-public class PieceManager : IPieceManager
+public class PersistenceManager : IPersistenceManager
 {
-    private readonly ILogger<PieceManager> _logger;
+    private readonly ILogger<PersistenceManager> _logger;
     private readonly IFileManager _fileManager;
 
-    public PieceManager(ILogger<PieceManager> logger, IFileManager fileManager)
+    public PersistenceManager(ILogger<PersistenceManager> logger, IFileManager fileManager)
     {
         _logger = logger;
         _fileManager = fileManager;

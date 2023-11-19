@@ -6,12 +6,12 @@ namespace ETor.App.Services;
 public interface ITransferManager
 {
     void StartAll(TorrentData torrent);
-    Dictionary<Guid, Transfer> Transfers { get; }
+    Dictionary<Guid, TorrentTransfer> Transfers { get; }
 }
 
 public class TransferManager : ITransferManager
 {
-    public Dictionary<Guid, Transfer> Transfers { get; }
+    public Dictionary<Guid, TorrentTransfer> Transfers { get; }
 
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<TransferManager> _logger;
@@ -20,7 +20,7 @@ public class TransferManager : ITransferManager
     {
         _loggerFactory = loggerFactory;
         _logger = logger;
-        Transfers = new Dictionary<Guid, Transfer>();
+        Transfers = new Dictionary<Guid, TorrentTransfer>();
     }
 
     public void StartAll(TorrentData torrent)
@@ -30,7 +30,7 @@ public class TransferManager : ITransferManager
             throw new InvalidOperationException("This torrent is already started");
         }
 
-        var transfer = new Transfer(torrent, _loggerFactory);
+        var transfer = new TorrentTransfer(torrent, _loggerFactory);
         Transfers[torrent.InternalId] = transfer;
         transfer.Start();
     }

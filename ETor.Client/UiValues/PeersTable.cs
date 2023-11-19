@@ -6,29 +6,26 @@ using ImGuiNET;
 
 namespace ETor.Client.UiValues;
 
-public class TrackersTable
+public class PeersTable
 {
-    public const int Columns = 7;
-
-    private List<TrackersTableRow> _rows = new();
-
-    private IReadOnlyList<TrackerData> _source = ArraySegment<TrackerData>.Empty;
+    public const int Columns = 3;
 
     private int? _lastSelectedIndex = null;
 
+    private IReadOnlyList<PeerData> _source = ArraySegment<PeerData>.Empty;
+    private List<PeersTableRow> _rows = new();
     public bool HasRows => _rows.Count > 0;
 
     // ReSharper disable once RedundantExplicitArraySize
     private static readonly string[] Headers = new string[Columns]
     {
         "#",
-        "Url",
-        "Protocol",
-        "Status",
-        "Connection Id",
-        "Update Interval",
-        "Downloaded"
+        "IP",
+        "Port"
     };
+
+    private TorrentTransfer? _transfer;
+    private IReadOnlyList<PeerData> _peers;
 
     public void DrawHeaders()
     {
@@ -47,38 +44,35 @@ public class TrackersTable
         ImGui.PopStyleVar();
     }
 
-    public void UpdateIfNeeded(IReadOnlyList<TrackerData> source, int? selectedIndex, IDictionary<Guid, TorrentTransfer> transfers)
+    public void UpdateIfNeeded(IReadOnlyList<PeerData> source, TorrentTransfer? transfer, int? selectedIndex)
     {
+        _transfer = transfer;
         _source = source;
 
-        while (_source.Count > _rows.Count)
+        if (_transfer is null)
         {
-            _rows.Add(new TrackersTableRow(_rows.Count));
+            return;
+        }
+        
+        while (_transfer.Peers.Count > _rows.Count)
+        {
+            _rows.Add(new PeersTableRow(_rows.Count));
         }
 
-        while (_rows.Count > _source.Count)
+        while (_rows.Count > _transfer.Peers.Count)
         {
             _rows.RemoveAt(_rows.Count - 1);
         }
 
         for (var i = 0; i < _source.Count; i++)
         {
-            transfers.TryGetValue(_source[i]
-                .InternalId, out var transfer);
-
-            Tracker? tracker = null;
-            
-            transfer?.Trackers.TryGetValue(
+            _transfer.Peers.TryGetValue(
                 _source[i]
-                    .InternalId,
-                out tracker
+                    .Address,
+                out var peer
             );
-
             _rows[i]
-                .UpdateIfNeeded(
-                    _source[i],
-                    tracker
-                );
+                .UpdateIfNeeded(_source[i], peer);
         }
 
         if (_lastSelectedIndex != selectedIndex)
