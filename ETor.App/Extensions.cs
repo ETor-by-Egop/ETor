@@ -56,7 +56,7 @@ public static class Extensions
         services.Configure<FileManagerConfig>(configuration.GetSection(nameof(FileManagerConfig)));
 
         services.AddSingleton<Application>();
-        services.AddSingleton<ITrackerManager, TrackerManager>();
+        services.AddSingleton<ITransferManager, TransferManager>();
         services.AddSingleton<IFileManager, FileManager>();
         services.AddSingleton<IPieceManager, PieceManager>();
 

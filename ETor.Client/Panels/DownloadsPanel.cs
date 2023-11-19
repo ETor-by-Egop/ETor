@@ -33,7 +33,12 @@ public class DownloadsPanel : IImGuiPanel
 
             if (ImGui.Button("Start##create-files"))
             {
-                Task.Run(() => _app.StartDownload(_app.Torrents[_app.SelectedTorrentIndex!.Value]));
+                Task.Run(() => _app.StartDownload(_app.Torrents[_app.SelectedTorrentIndex!.Value]))
+                    .ContinueWith(
+                        faultedTask => {
+                            _logger.LogError(faultedTask.Exception, "Start failed with exception"); 
+                        }, 
+                        TaskContinuationOptions.OnlyOnFaulted);
             }
 
             if (!_app.SelectedTorrentIndex.HasValue)

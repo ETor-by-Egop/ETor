@@ -10,7 +10,7 @@ namespace ETor.App;
 
 public class Application
 {
-    private readonly ITrackerManager _trackerManager;
+    private readonly ITransferManager _transferManager;
     private readonly IFileManager _fileManager;
     private readonly IPieceManager _pieceManager;
 
@@ -22,9 +22,9 @@ public class Application
 
     private readonly ILogger<Application> _logger;
 
-    public Application(ITrackerManager trackerManager, ILogger<Application> logger, IFileManager fileManager, IPieceManager pieceManager)
+    public Application(ITransferManager transferManager, ILogger<Application> logger, IFileManager fileManager, IPieceManager pieceManager)
     {
-        _trackerManager = trackerManager;
+        _transferManager = transferManager;
         _logger = logger;
         _fileManager = fileManager;
         _pieceManager = pieceManager;
@@ -91,7 +91,7 @@ public class Application
         await Task.WhenAll(checkPiecesTask);
 
         // announce
-        _trackerManager.StartAll(torrent);
+        _transferManager.StartAll(torrent);
         // connect to peer
         // download piece
         // write data to a file

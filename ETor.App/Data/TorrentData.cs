@@ -4,6 +4,8 @@ namespace ETor.App.Data;
 
 public class TorrentData : IHashCoded
 {
+    public Guid InternalId { get; set; } = Guid.NewGuid();
+    
     private readonly List<TrackerData> _trackers;
 
     private readonly List<FileData> _files;

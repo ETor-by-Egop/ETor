@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using ETor.App;
 using ETor.App.Data;
+using ETor.App.Trackers;
 using ImGuiNET;
 
 namespace ETor.Client.UiValues;
@@ -25,8 +26,8 @@ public class TrackersTable
         "Protocol",
         "Status",
         "Connection Id",
-        "Last Connect Attempts",
-        "Last Announce Attempts"
+        "Update Interval",
+        "Downloaded"
     };
 
     public void DrawHeaders()
@@ -46,7 +47,7 @@ public class TrackersTable
         ImGui.PopStyleVar();
     }
 
-    public void UpdateIfNeeded(IReadOnlyList<TrackerData> source, int? selectedIndex, IDictionary<Guid, TrackerMonitoringThread> threads)
+    public void UpdateIfNeeded(IReadOnlyList<TrackerData> source, int? selectedIndex, IDictionary<Guid, Transfer> transfers)
     {
         _source = source;
 
@@ -62,12 +63,21 @@ public class TrackersTable
 
         for (var i = 0; i < _source.Count; i++)
         {
-            threads.TryGetValue(_source[i]
-                .InternalId, out var thread);
+            transfers.TryGetValue(_source[i]
+                .InternalId, out var transfer);
+
+            Tracker? tracker = null;
+            
+            transfer?.Trackers.TryGetValue(
+                _source[i]
+                    .InternalId,
+                out tracker
+            );
+
             _rows[i]
                 .UpdateIfNeeded(
                     _source[i],
-                    thread
+                    tracker
                 );
         }
 

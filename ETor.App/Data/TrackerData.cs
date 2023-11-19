@@ -5,6 +5,8 @@ namespace ETor.App.Data;
 public class TrackerData : IHashCoded
 {
     public Guid InternalId { get; set; } = Guid.NewGuid();
+
+    public Uri Uri { get; set; }
     
     public string Url { get; private set;}
 
@@ -18,6 +20,8 @@ public class TrackerData : IHashCoded
     public long ConnectionId { get; private set; }
     public long HashCode { get; private set; }
 
+    public long UpdateInterval { get; private set; }
+
 
     public TrackerData(string url)
     {
@@ -25,6 +29,8 @@ public class TrackerData : IHashCoded
         {
             throw new InvalidOperationException($"Failed to parse tracker url: {url}");
         }
+
+        Uri = uri;
 
         Url = url;
         Host = uri.Host;
@@ -75,6 +81,12 @@ public class TrackerData : IHashCoded
     public void SetAnnouncing()
     {
         Status = TrackerStatus.Announcing;
+        HashCode++;
+    }
+
+    public void SetUpdateInterval(long interval)
+    {
+        UpdateInterval = interval;
         HashCode++;
     }
 

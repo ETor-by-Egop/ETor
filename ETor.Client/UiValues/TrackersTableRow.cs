@@ -1,5 +1,7 @@
-﻿using ETor.App;
+﻿using System.Globalization;
+using ETor.App;
 using ETor.App.Data;
+using ETor.App.Trackers;
 using ETor.Shared;
 using ImGuiNET;
 
@@ -10,7 +12,7 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
     private readonly IAutoComputedValueOf<TrackerData>[] _columns;
 
     private bool _isActive;
-    private TrackerMonitoringThread? _thread;
+    private Tracker? _tracker;
 
     public TrackersTableRow(int index)
     {
@@ -21,8 +23,8 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
             AutoComputedValue<TrackerData>.Of(x => x.Protocol, x => x.ToString("G")),
             AutoComputedValue<TrackerData>.Of(x => x.Status, x => x.ToString("G")),
             AutoComputedValue<TrackerData>.Of(x => x.ConnectionId, x => x.ToString()),
-            NoComputeValue<TrackerData>.Of(() => _thread?.LastConnectAttempts, x => x?.ToString() ?? "unknown"),
-            NoComputeValue<TrackerData>.Of(() => _thread?.LastAnnounceAttempts, x => x?.ToString() ?? "unknown"),
+            AutoComputedValue<TrackerData>.Of(x => x.UpdateInterval, x => x.ToString(CultureInfo.InvariantCulture)),
+            NoComputeValue<TrackerData>.Of(() => _tracker?.Downloaded, x => x?.ToString() ?? "unknown"),
         };
     }
 
@@ -80,9 +82,9 @@ public class TrackersTableRow : ComputedTableRow<TrackerData>
         }
     }
 
-    public void UpdateIfNeeded(TrackerData value, TrackerMonitoringThread? thread)
+    public void UpdateIfNeeded(TrackerData value, Tracker? tracker)
     {
         base.UpdateIfNeeded(value);
-        _thread = thread;
+        _tracker = tracker;
     }
 }

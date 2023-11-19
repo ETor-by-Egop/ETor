@@ -12,15 +12,15 @@ namespace ETor.Client.Panels;
 public class FilesInfoPanel : IImGuiPanel
 {
     private readonly Application _app;
-    private readonly ITrackerManager _trackerManager;
+    private readonly ITransferManager _transferManager;
     private readonly FilesTable _table;
     private readonly ILogger<DownloadsPanel> _logger;
 
-    public FilesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITrackerManager trackerManager)
+    public FilesInfoPanel(ILogger<DownloadsPanel> logger, Application app, ITransferManager transferManager)
     {
         _logger = logger;
         _app = app;
-        _trackerManager = trackerManager;
+        _transferManager = transferManager;
         _table = new FilesTable();
     }
 
